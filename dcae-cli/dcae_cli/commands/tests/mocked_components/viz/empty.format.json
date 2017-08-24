@@ -1,0 +1,10 @@
+{
+  "self": {
+    "name": "std.empty",
+    "version": "1.0.0",
+    "description": "Represents an empty message with no content"
+  },
+  "dataformatversion": "1.0.0",
+  "jsonschema": {
+  }
+}

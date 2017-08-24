@@ -1,0 +1,13 @@
+# TODO: May need to add the following line
+# --extra-index-url <onap pypi url>
+python-consul==0.6.1
+six==1.10.0
+SQLAlchemy==1.1.4
+SQLAlchemy-Utils==0.32.11
+click==6.6
+jsonschema==2.5.1
+docker-py==1.10.6
+terminaltables==3.1.0
+python-discovery-client==2.0.0
+python-dockering==1.2.0
+psycopg2==2.7.1

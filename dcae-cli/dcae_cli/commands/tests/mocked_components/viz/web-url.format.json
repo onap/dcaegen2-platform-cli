@@ -1,0 +1,19 @@
+{
+  "self": {
+    "name": "std.web.url",
+    "version": "1.0.0",
+    "description": "Represents a web URL"
+  },
+  "dataformatversion": "1.0.0",
+  "jsonschema": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "properties": {
+          "URL": {
+              "type": "string"
+          }
+      },
+      "additionalProperties": false
+    }
+}
+  

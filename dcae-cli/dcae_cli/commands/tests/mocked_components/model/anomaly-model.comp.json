@@ -1,0 +1,49 @@
+{
+  "self": {
+    "version": "1.0.0",
+    "name": "asimov.anomaly_classifier",
+    "description": "Classifies VNF KPIs as anommalous or not",
+    "component_type": "docker"
+  },
+  "streams": {
+    "subscribes": [{
+        "format": "std.vnf.kpi",
+        "version": "1.0.0",
+        "route": "/data",
+        "type": "http"
+      }],
+    "publishes": [
+      {
+        "format": "asimov.std.integerClassification",
+        "version": "1.0.0",
+        "config_key": "pred",
+        "type": "http"
+      }
+    ]
+  },
+  "services": {
+    "calls": [],
+    "provides": []
+  },
+  "parameters": [
+    {
+      "name": "threshold",
+      "value": 0.75,
+      "description": "Probability threshold to exceed to be anomalous"
+    }
+  ],
+  "auxilary": {
+    "healthcheck": {
+        "type": "http",
+        "endpoint": "/health",
+        "interval": "15s",
+        "timeout": "1s"
+    }
+  },
+  "artifacts": [
+    {
+      "uri": "asimov-anomaly-model",
+      "type": "docker image"
+    }
+  ]
+}

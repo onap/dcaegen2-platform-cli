@@ -1,0 +1,51 @@
+{
+  "self": {
+    "version": "1.0.0",
+    "name": "asimov.viz.line_plot",
+    "description": "Plots class probabilities as a line plot in real-time",
+    "component_type": "docker"
+  },
+  "streams": {
+    "subscribes": [
+      {
+        "format": "asimov.std.integerClassification",
+        "version": "1.0.0",
+        "route": "/prediction",
+        "type": "http"
+      }
+    ],
+    "publishes": []
+  },
+  "services": {
+    "calls": [],
+    "provides": [
+      {
+        "route": "/viz",
+        "verb": "GET",
+        "request": {
+          "format": "std.empty",
+          "version": "1.0.0"
+        },
+        "response": {
+          "format": "std.web.url",
+          "version": "1.0.0"
+        }
+      }
+    ]
+  },
+  "parameters": [],
+  "auxilary": {
+    "healthcheck": {
+        "type": "http",
+        "endpoint": "/health",
+        "interval": "15s",
+        "timeout": "1s"
+    }
+  },
+  "artifacts": [
+    {
+      "uri": "asimov-anomaly-viz",
+      "type": "docker image"
+    }
+  ]
+}

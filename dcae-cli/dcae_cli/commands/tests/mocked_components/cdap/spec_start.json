@@ -1,0 +1,64 @@
+{  
+   "self":{  
+      "name":"cdap.helloworld.mock.catalog.testing.startnode",
+      "version":"0.7.1",
+      "description":"cdap test component",
+      "component_type":"cdap"
+   },
+   "streams":{  
+      "subscribes": [{
+         "format": "std.empty",
+         "version": "1.0.6",
+         "route": "/unsure_if_needed_for_cdap",
+         "type": "http"
+      }],
+      "publishes": []
+   },
+   "services":{  
+      "calls": [
+      {
+        "config_key": "service_call_example",
+        "verb": "GET",
+        "request": {
+          "format": "std.empty",
+          "version": "1.0.6"
+        },
+        "response": {
+          "format": "std.empty",
+          "version": "1.0.6"
+        }
+      }
+    ],
+    "provides":[]
+   },
+"parameters": {  
+       "app_config" : [
+                         {"name" : "some_param",
+                         "description" : "some desc",
+                         "value" : "some_value"}
+                      ],
+       "app_preferences" : [
+                             {"name" : "some_param2",
+                              "description" : "some desc2",
+                              "value" : "some_value2"}
+                           ],
+       "program_preferences" : [{"program_type" : "flows", "program_id" : "WhoFlow", "program_pref" : [{"name" : "some_param3","description" : "some desc3", "value" : "some_value3"}]}]
+   },
+   "auxilary": {
+    "streamname":"who",
+    "artifact_name" : "HelloWorld",
+    "artifact_version" : "3.4.3",
+    "programs" : [
+                    {"program_type" : "flows", "program_id" : "WhoFlow"},
+                    {"program_type" : "services", "program_id" : "Greeting"}
+                  ],
+    "namespace" : "hw"
+    },
+  "artifacts": [
+    {
+      "uri": "http://make-me-valid/jar_files/HelloWorld-3.4.3.jar",
+      "type": "jar"
+    }
+  ]
+}
+

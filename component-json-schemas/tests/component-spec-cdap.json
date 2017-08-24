@@ -1,0 +1,78 @@
+{  
+   "self":{  
+      "name":"cdap.helloworld.endnode",
+      "version":"0.8.0",
+      "description":"cdap test component",
+      "component_type":"cdap"
+   },
+   "streams":{  
+      "subscribes": [
+        {
+          "format": "some.format",
+          "version": "5.0.0",
+          "route": "/yay",
+          "type": "http"
+        },
+        {
+          "format": "some.format",
+          "version": "5.0.0",
+          "config_key": "foo-sub",
+          "type": "message router"
+        }],
+      "publishes": [{
+         "format": "std.empty",
+         "version": "1.0.6",
+         "config_key": "stream_publish_example",
+         "type": "message_router"
+      }]
+   },
+   "services":{  
+      "calls": [],
+      "provides":[  
+         {  
+            "request":{  
+               "format":"std.empty",
+               "version":"1.0.6"
+            },
+            "response":{  
+               "format":"std.empty",
+               "version":"1.0.6"
+            },
+            "service_name":"Greeting",
+            "service_endpoint":"greet",
+            "verb":"GET"
+         }
+      ]
+   },
+   "parameters": {
+        "app_config" : [
+                         {"name" : "some_param",
+                         "description" : "some desc",
+                         "value" : "some_value",
+                         "type": "string"}
+                      ],
+       "app_preferences" : [
+                             {"name" : "some_param2",
+                              "description" : "some desc2",
+                              "value" : true,
+                             "type": "boolean"}
+                           ],
+       "program_preferences" : [{"program_type" : "flows", "program_id" : "WhoFlow", "program_pref" : [{"name" : "some_param3","description" : "some desc3", "value" : "some_value3", "type": "number"}]}]
+    },
+   "auxilary": {
+       "streamname":"who",
+       "artifact_name" : "HelloWorld",
+       "artifact_version" : "3.4.3",
+       "programs" : [
+                    {"program_type" : "flows", "program_id" : "WhoFlow"},
+                    {"program_type" : "services", "program_id" : "Greeting"}
+                  ],
+    "namespace" : "hw"
+   },
+   "artifacts": [
+     {
+       "uri": "some jar url",
+       "type": "jar"
+     }
+   ]
+}

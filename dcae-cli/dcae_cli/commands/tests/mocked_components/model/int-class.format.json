@@ -1,0 +1,18 @@
+{
+  "self": {
+    "name": "asimov.std.integerClassification",
+    "version": "1.0.0",
+    "description": "Represents a single classification from a machine learning model"
+  },
+  "dataformatversion": "1.0.0",
+  "jsonschema": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "properties": {
+          "classification": {
+              "type": "string"
+          }
+      },
+      "additionalProperties": false
+  }
+}

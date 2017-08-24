@@ -1,0 +1,44 @@
+{
+  "self": {
+    "version": "1.0.0",
+    "name": "std.vnf.kpi_collector",
+    "description": "Continuously publishes VNF KPIs",
+    "component_type": "docker"
+  },
+  "streams": {
+    "subscribes": [],
+    "publishes": [
+      {
+        "format": "std.vnf.kpi",
+        "version": "1.0.0",
+        "config_key": "kpi_pub",
+        "type": "http"
+      }
+    ]
+  },
+  "services": {
+    "calls": [],
+    "provides": []
+  },
+  "parameters": [
+    {
+      "name": "sleep_sec",
+      "value": 0.75,
+      "description": "Number of seconds to sleep between publishes"
+    }
+  ],
+  "auxilary": {
+    "healthcheck": {
+        "type": "http",
+        "endpoint": "/health",
+        "interval": "15s",
+        "timeout": "1s"
+    }
+  },
+  "artifacts": [
+    {
+      "uri": "asimov-anomaly-collector",
+      "type": "docker image"
+    }
+  ]
+}
