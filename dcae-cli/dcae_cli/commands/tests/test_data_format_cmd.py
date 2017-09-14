@@ -77,6 +77,41 @@ def test_basic():
     spec_str = runner.invoke(cli, cmd, obj=obj).output
     assert df_spec == json.loads(spec_str)
 
+    # test of generate
+    bad_dir = os.path.join(TEST_DIR, 'mocked_components', 'model', 'baddir')
+    cmd = "data_format generate --keywords \"name:1.0.2\" {:}".format(bad_dir).split()
+    err_str = runner.invoke(cli, cmd, obj=obj).output
+    assert "does not exist" in err_str 
+
+    empty_dir = os.path.join(TEST_DIR, 'mocked_components', 'model', 'emptydir')
+    try:
+      os.stat(empty_dir)
+    except:
+      os.mkdir(empty_dir)
+    cmd = "data_format generate --keywords \"name:1.0.2\" {:}".format(empty_dir).split()
+    err_str = runner.invoke(cli, cmd, obj=obj).output
+    assert "No JSON files found" in err_str 
+
+    bad_json = os.path.join(TEST_DIR, 'mocked_components', 'model', 'badjson')
+    cmd = "data_format generate --keywords \"name:1.0.2\" {:}".format(bad_json).split()
+    err_str = runner.invoke(cli, cmd, obj=obj).output
+    assert "Bad JSON file" in err_str 
+
+    generate_dir = os.path.join(TEST_DIR, 'mocked_components', 'model', 'generatedir')
+    cmd = "data_format generate --keywords name:1.0.2 {:} ".format(generate_dir).split()
+    out_str = runner.invoke(cli, cmd, obj=obj).output
+    assert '{\n    "dataformatversion": "1.0.0", \n    "jsonschema": {\n        "$schema": "http://json-schema.org/draft-04/schema#", \n        "description": "", \n        "properties": {\n            "foobar": {\n                "description": "", \n                "maxLength": 0, \n                "minLength": 0, \n                "pattern": "", \n                "type": "string"\n            }, \n            "foobar2": {\n                "description": "", \n                "maxLength": 0, \n                "minLength": 0, \n                "pattern": "", \n                "type": "string"\n            }\n        }, \n        "type": "object"\n    }, \n    "self": {\n        "description": "", \n        "name": "name", \n        "version": "1.0.2"\n    }\n}\n' ==  out_str
+
+    generate_dir = os.path.join(TEST_DIR, 'mocked_components', 'model', 'generatedir')
+    cmd = "data_format generate name:1.0.2 {:} ".format(generate_dir).split()
+    out_str = runner.invoke(cli, cmd, obj=obj).output
+    assert '{\n    "dataformatversion": "1.0.0", \n    "jsonschema": {\n        "$schema": "http://json-schema.org/draft-04/schema#", \n        "description": "", \n        "properties": {\n            "foobar": {\n                "description": "", \n                "type": "string"\n            }, \n            "foobar2": {\n                "description": "", \n                "type": "string"\n            }\n        }, \n        "type": "object"\n    }, \n    "self": {\n        "description": "", \n        "name": "name", \n        "version": "1.0.2"\n    }\n}\n' == out_str
+
+    generate_dir = os.path.join(TEST_DIR, 'mocked_components', 'model', 'generatedir', 'ex1.json')
+    cmd = "data_format generate name:1.0.2 {:} ".format(generate_dir).split()
+    out_str = runner.invoke(cli, cmd, obj=obj).output
+    assert '{\n    "dataformatversion": "1.0.0", \n    "jsonschema": {\n        "$schema": "http://json-schema.org/draft-04/schema#", \n        "additionalproperties": true, \n        "description": "", \n        "properties": {\n            "foobar": {\n                "description": "", \n                "type": "string"\n            }\n        }, \n        "required": [\n            "foobar"\n        ], \n        "type": "object"\n    }, \n    "self": {\n        "description": "", \n        "name": "name", \n        "version": "1.0.2"\n    }\n}\n' == out_str
+
 
 if __name__ == '__main__':
     '''Test area'''

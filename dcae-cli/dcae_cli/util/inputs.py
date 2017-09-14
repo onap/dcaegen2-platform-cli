@@ -18,5 +18,23 @@
 #
 # ECOMP is a trademark and service mark of AT&T Intellectual Property.
 
-# -*- coding: utf-8 -*-
-__version__ = "2.9.0"
+"""
+Functions for handling inputs
+"""
+
+class InputsValidationError(RuntimeError):
+    pass
+
+def filter_entries(inputs_map, spec):
+    """Filter inputs entries that are not in the spec"""
+    param_names = [ p["name"] for p in spec["parameters"] \
+            if "sourced_at_deployment" in p and p["sourced_at_deployment"] ]
+
+    # Identify any missing parameters from inputs_map
+    missing = list(filter(lambda pn: pn not in inputs_map, param_names))
+
+    if missing:
+        raise InputsValidationError(
+            "Inputs map is missing keys: {0}".format(missing))
+
+    return { pn: inputs_map[pn] for pn in param_names }

@@ -287,9 +287,10 @@ def validate_dmaap_map_entries(dmaap_map, mr_config_keys, dr_config_keys):
         logger.error("Please use the \"--dmaap-file\" option")
         return False
 
+    config_keys = dr_config_keys + mr_config_keys
     # Look for missing keys
     is_missing = lambda config_key: config_key not in dmaap_map
-    missing_keys = list(filter(is_missing, mr_config_keys))
+    missing_keys = list(filter(is_missing, config_keys))
 
     if missing_keys:
         logger.error("Missing config keys in dmaap json: {0}".format(
@@ -298,7 +299,7 @@ def validate_dmaap_map_entries(dmaap_map, mr_config_keys, dr_config_keys):
         return False
 
     # Look for unexpected keys
-    is_unexpected = lambda config_key: config_key not in mr_config_keys
+    is_unexpected = lambda config_key: config_key not in config_keys
     unexpected_keys = list(filter(is_unexpected, dmaap_map.keys()))
 
     if unexpected_keys:

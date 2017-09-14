@@ -498,10 +498,20 @@ def _group_config(config, config_key_map):
     return grouped_conf
 
 
+def _apply_inputs(config, inputs_map):
+    """Update configuration with inputs
+
+    This method updates the values of the configuration parameters using values
+    from the inputs map.
+    """
+    config.update(inputs_map)
+    return config
+
+
 @contextlib.contextmanager
 def config_context(user, cname, cver, params, interface_map, instance_map,
-        config_key_map, dmaap_map={}, instance_prefix=None, host=consul_host,
-        always_cleanup=True, force_config=False):
+        config_key_map, dmaap_map={}, inputs_map={}, instance_prefix=None,
+        host=consul_host, always_cleanup=True, force_config=False):
     '''Convenience utility for creating configs and cleaning them up
 
     Args
@@ -518,6 +528,7 @@ def config_context(user, cname, cver, params, interface_map, instance_map,
                 user, cname, cver, params, interface_map, instance_map, dmaap_map,
                 instance_prefix, force=force_config)
 
+        conf = _apply_inputs(conf, inputs_map)
         conf = _group_config(conf, config_key_map)
 
         push_config(conf_key, conf, rels_key, rels, dmaap_key, dmaap_map, host)

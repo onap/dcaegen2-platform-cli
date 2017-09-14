@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.9.0]
+
+* Add data format generate command
+* Fix issue with data router config keys
+
+## [2.8.1]
+
+* Improve error message when inputs map is missing item. Show the specific parameters that are causing issues.
+
+## [2.8.0]
+
+* Enhance to support parameters that are sourced at deployment
+* Provide new command line arg --inputs-file
+* Use inputs file to bind values to generated configuration for parameters that have been specified to be `sourced_at_deployment` true.
+
 ## [2.7.0]
 
 * Rip out Docker related code and use common python-dockering library

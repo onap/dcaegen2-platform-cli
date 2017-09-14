@@ -443,6 +443,11 @@ def test_parse_instance_lookup():
     assert dis.parse_instance_lookup(results) == "192.168.1.100:8080"
 
 
+def test_apply_inputs():
+    updated_config = dis._apply_inputs({"foo": "bar"}, {"foo": "baz"})
+    assert updated_config == {"foo": "baz"}
+
+
 if __name__ == '__main__':
     '''Test area'''
     pytest.main([__file__, ])

@@ -29,7 +29,7 @@ import click
 
 from discovery_client import resolve_name
 
-from dcae_cli.util import profiles, load_json, dmaap
+from dcae_cli.util import profiles, load_json, dmaap, inputs
 from dcae_cli.util.run import run_component, dev_component
 from dcae_cli.util import discovery as dis
 from dcae_cli.util.discovery import DiscoveryNoDownstreamComponentError
@@ -165,6 +165,28 @@ def _parse_dmaap_file(dmaap_file):
         message = "Problems with parsing the dmaap file. Check to make sure that it is a valid json and is in the expected structure."
         raise DcaeException(message)
 
+_help_inputs_file = """
+Path to a file that contains a json that contains values to be used to bind to configuration parameters that have been marked as "sourced_at_deployment". The structure of the json is expected to be:
+
+ {
+   <parameter1 name>: value,
+   <parameter2 name>: value
+ }
+
+The "parameter name" is the value of the "name" property for the given configuration parameter.
+"""
+
+def _parse_inputs_file(inputs_file):
+    try:
+        with open(inputs_file, 'r+') as f:
+            inputs_map = json.load(f)
+            # TODO: Validation of schema in the future? Skipping this because
+            # dti_payload is not being intended to be used.
+            return inputs_map
+    except Exception as e:
+        message = "Problems with parsing the inputs file. Check to make sure that it is a valid json and is in the expected structure."
+        raise DcaeException(message)
+
 
 @component.command()
 @click.option('--external-ip', '-ip', default=None, help='The external IP address of the Docker host. Only used for Docker components.')
@@ -173,20 +195,28 @@ def _parse_dmaap_file(dmaap_file):
 @click.option('--force', is_flag=True, help='Force component to run without valid downstream dependencies')
 @click.option('--dmaap-file', type=click.Path(resolve_path=True, exists=True, dir_okay=False),
         help=_help_dmaap_file)
+@click.option('--inputs-file', type=click.Path(resolve_path=True, exists=True, dir_okay=False),
+        help=_help_inputs_file)
 @click.argument('component')
 @click.pass_obj
-def run(obj, external_ip, additional_user, attached, force, dmaap_file, component):
+def run(obj, external_ip, additional_user, attached, force, dmaap_file, component,
+        inputs_file):
     '''Runs the latest version of COMPONENT. You may optionally specify version via COMPONENT:VERSION'''
     cname, cver = parse_input(component)
     user, catalog = obj['config']['user'], obj['catalog']
 
     dmaap_map = _parse_dmaap_file(dmaap_file) if dmaap_file else {}
+    inputs_map = _parse_inputs_file(inputs_file) if inputs_file else {}
 
     try:
         run_component(user, cname, cver, catalog, additional_user, attached, force,
-                dmaap_map, external_ip)
+                dmaap_map, inputs_map, external_ip)
     except DiscoveryNoDownstreamComponentError as e:
         message = "Either run a compatible downstream component first or run with the --force flag to ignore this error"
+        raise DcaeException(message)
+    except inputs.InputsValidationError as e:
+        click.echo("There is a problem. {0}".format(e))
+        message = "Component requires inputs. Please look at the use of --inputs-file and make sure the format is correct"
         raise DcaeException(message)
 
 @component.command()
@@ -205,19 +235,27 @@ def undeploy(obj,  component):
 @click.option('--force', is_flag=True, help='Force component to run without valid downstream dependencies')
 @click.option('--dmaap-file', type=click.Path(resolve_path=True, exists=True, dir_okay=False),
         help=_help_dmaap_file)
+@click.option('--inputs-file', type=click.Path(resolve_path=True, exists=True, dir_okay=False),
+        help=_help_inputs_file)
 @click.pass_obj
-def dev(obj, specification, additional_user, force, dmaap_file):
+def dev(obj, specification, additional_user, force, dmaap_file, inputs_file):
     '''Set up component in development for discovery, use for local development'''
     user, catalog = obj['config']['user'], obj['catalog']
 
     dmaap_map = _parse_dmaap_file(dmaap_file) if dmaap_file else {}
+    inputs_map = _parse_inputs_file(inputs_file) if inputs_file else {}
 
     with open(specification, 'r+') as f:
         spec = json.loads(f.read())
         try:
-            dev_component(user, catalog, spec, additional_user, force, dmaap_map)
+            dev_component(user, catalog, spec, additional_user, force, dmaap_map,
+                    inputs_map)
         except DiscoveryNoDownstreamComponentError as e:
             message = "Either run a compatible downstream component first or run with the --force flag to ignore this error"
+            raise DcaeException(message)
+        except inputs.InputsValidationError as e:
+            click.echo("There is a problem. {0}".format(e))
+            message = "Component requires inputs. Please look at the use of --inputs-file and make sure the format is correct"
             raise DcaeException(message)
 
 

@@ -9,5 +9,6 @@ jsonschema==2.5.1
 docker-py==1.10.6
 terminaltables==3.1.0
 python-discovery-client==2.0.0
-python-dockering==1.2.0
+python-dockering==1.2.1
 psycopg2==2.7.1
+genson==0.2.2

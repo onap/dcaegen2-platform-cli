@@ -51,6 +51,7 @@ setup(
                       'docker-py>=1.10,<2',
                       'terminaltables',
                       'psycopg2',
+                      'genson',
                       'python-discovery-client>=2.0.0',
                       'python-dockering>=1.0.0,<2.0.0'
                       ],

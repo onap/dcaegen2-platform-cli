@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Schema for dmaap inputs",
+  "type": "object",
+  "oneOf": [
+    { "$ref": "#/definitions/message_router" }
+  ],
+  "definitions": {
+    "message_router": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["message_router"]
+        },
+        "aaf_username": {
+          "type": "string"
+        },
+        "aaf_password": {
+          "type": "string"
+        },
+        "dmaap_info": {
+          "type": "object",
+          "properties": {
+            "client_role": {
+              "type": "string"
+            },
+            "client_id": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "topic_url": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "topic_url"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "type",
+        "dmaap_info"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

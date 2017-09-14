@@ -1,0 +1,10 @@
+{
+        "type": "message_router",
+        "aaf_username": "foo3",
+        "aaf_password": "bar3",
+        "dmaap_info":{
+           "client_role":"some.dcae.member",
+           "client_id":"123456",
+           "location":"mtc5"
+        }
+}

@@ -18,5 +18,20 @@
 #
 # ECOMP is a trademark and service mark of AT&T Intellectual Property.
 
-# -*- coding: utf-8 -*-
-__version__ = "2.9.0"
+"""
+Tests for inputs module
+"""
+import pytest
+from dcae_cli.util import inputs
+
+
+def test_filter_entries():
+    spec = { "parameters": [{"name": "foo"}, {"name": "bar",
+        "sourced_at_deployment": False}, {"name": "baz", "sourced_at_deployment": True}] }
+
+    with pytest.raises(inputs.InputsValidationError):
+        inputs.filter_entries({}, spec)
+
+    inputs_map = { "foo": "do not copy", "baz": "hello world", "extra": "do not copy" }
+
+    assert len(inputs.filter_entries(inputs_map, spec)) == 1

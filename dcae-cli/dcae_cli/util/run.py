@@ -27,7 +27,7 @@ import six
 from functools import partial
 import click
 from dcae_cli.util import docker_util as du
-from dcae_cli.util import dmaap
+from dcae_cli.util import dmaap, inputs
 from dcae_cli.util.cdap_util import run_component as run_cdap_component
 from dcae_cli.util.exc import DcaeException
 from dcae_cli.util import discovery as dis
@@ -124,7 +124,7 @@ def _verify_component(name, max_wait, consul_host):
 
 
 def run_component(user, cname, cver, catalog, additional_user, attached, force,
-        dmaap_map, external_ip=None):
+        dmaap_map, inputs_map, external_ip=None):
     '''Runs a component based on the component type
 
     Args
@@ -134,6 +134,8 @@ def run_component(user, cname, cver, catalog, additional_user, attached, force,
         this flag is set to True.
     dmaap_map: (dict) config_key to message router or data router connections.
         Used as a manual way to make available this information for the component.
+    inputs_map: (dict) config_key to value that is intended to be provided at
+        deployment time as an input
     '''
     cname, cver = catalog.verify_component(cname, cver)
     ctype = catalog.get_component_type(cname, cver)
@@ -154,12 +156,13 @@ def run_component(user, cname, cver, catalog, additional_user, attached, force,
 
         spec = catalog.get_component_spec(cname, cver)
         config_key_map = build_config_keys_map(spec)
+        inputs_map = inputs.filter_entries(inputs_map, spec)
 
         dmaap_map = _update_delivery_urls(spec, profile.docker_host.split(":")[0],
                 dmaap_map)
 
         with config_context(user, cname, cver, params, interface_map,
-                instance_map, config_key_map, dmaap_map=dmaap_map,
+                instance_map, config_key_map, dmaap_map=dmaap_map, inputs_map=inputs_map,
                 always_cleanup=should_wait, force_config=force) as (instance_name, _):
             image = catalog.get_docker_image(cname, cver)
             docker_config = catalog.get_docker_config(cname, cver)
@@ -201,17 +204,20 @@ def run_component(user, cname, cver, catalog, additional_user, attached, force,
     elif ctype =='cdap':
         (jar, config, spec) = catalog.get_cdap(cname, cver)
         config_key_map = build_config_keys_map(spec)
+        inputs_map = inputs.filter_entries(inputs_map, spec)
+
         params, interface_map = catalog.get_discovery_for_cdap(cname, cver, neighbors)
 
         with config_context(user, cname, cver, params, interface_map, instance_map,
-                config_key_map, dmaap_map=dmaap_map, always_cleanup=False,
+                config_key_map, dmaap_map=dmaap_map, inputs_map=inputs_map, always_cleanup=False,
                 force_config=force) as (instance_name, templated_conf):
             run_cdap_component(catalog, params, instance_name, profile, jar, config, spec, templated_conf)
     else:
         raise DcaeException("Unsupported component type for run")
 
 
-def dev_component(user, catalog, specification, additional_user, force, dmaap_map):
+def dev_component(user, catalog, specification, additional_user, force, dmaap_map,
+        inputs_map):
     '''Sets up the discovery layer for in development component
 
     The passed-in component specification is
@@ -234,6 +240,8 @@ def dev_component(user, catalog, specification, additional_user, force, dmaap_ma
         this flag is set to True.
     dmaap_map: (dict) config_key to message router connections. Used as a
         manual way to make available this information for the component.
+    inputs_map: (dict) config_key to value that is intended to be provided at
+        deployment time as an input
     '''
     instance_map = _get_instances(user, additional_user)
     neighbors = six.iterkeys(instance_map)
@@ -247,11 +255,13 @@ def dev_component(user, catalog, specification, additional_user, force, dmaap_ma
     cname = specification["self"]["name"]
     cver = specification["self"]["version"]
     config_key_map = build_config_keys_map(specification)
+    inputs_map = inputs.filter_entries(inputs_map, specification)
 
     dmaap_map = _update_delivery_urls(specification, "localhost", dmaap_map)
 
     with config_context(user, cname, cver, params, interface_map, instance_map,
-        config_key_map, dmaap_map, always_cleanup=True, force_config=force) \
+        config_key_map, dmaap_map, inputs_map=inputs_map, always_cleanup=True,
+        force_config=force) \
                 as (instance_name, templated_conf):
 
         click.echo("Ready for component development")

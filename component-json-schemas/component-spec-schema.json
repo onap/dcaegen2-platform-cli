@@ -219,6 +219,11 @@
           "type": "boolean",
           "default": false
         },
+        "sourced_at_deployment": {
+          "description": "An optional key that declares a parameter's value to be assigned at deployment time (true). Default is false.",
+          "type": "boolean",
+          "default": false
+        },
         "policy_schema" :{
           "type": "array",
           "uniqueItems": true,
