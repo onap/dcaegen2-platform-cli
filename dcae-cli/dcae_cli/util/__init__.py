@@ -106,15 +106,13 @@ def load_json(path):
             raise DcaeException("File '{}' appears to be a malformed JSON.".format(path))
 
 
-def fetch_file_from_nexus(path, transform_func=json.loads):
-    """Fetch file from nexus
+def fetch_file_from_web(server_url, path, transform_func=json.loads):
+    """Fetch file from a web server
 
     The default behavior is to transform the response to a json.
     """
-    # TODO: Source this from app's configuration [ONAP URL TBD]
-    server_uri = "https://make-me-valid"
-    nexus_url = "{0}/{1}".format(server_uri, path)
-    r = requests.get(nexus_url)
+    artifact_url = "{0}/{1}".format(server_url, path)
+    r = requests.get(artifact_url)
     r.raise_for_status()
     if transform_func:
         return transform_func(r.text)

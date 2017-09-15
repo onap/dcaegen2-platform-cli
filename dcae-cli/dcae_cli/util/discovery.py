@@ -202,7 +202,7 @@ def _make_instances_map(instances):
     """
     mapping = defaultdict(set)
     for instance in instances:
-        match = _inst_re.match(instance_target)
+        match = _inst_re.match(instance)
         if match is None:
             continue
 

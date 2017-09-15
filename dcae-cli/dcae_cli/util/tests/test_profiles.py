@@ -122,10 +122,10 @@ def test_reinit_profiles(monkeypatch, tmpdir):
         "consul_host": "realsolcnsl00.dcae.solutioning.com",
         "docker_host": "realsoldokr00.dcae.solutioning.com:2376" }}
 
-    def fetch_profile(target_profile, path):
+    def fetch_profile(target_profile, server_url, path):
         return target_profile
 
-    monkeypatch.setattr(util, "fetch_file_from_nexus", partial(fetch_profile,
+    monkeypatch.setattr(util, "fetch_file_from_web", partial(fetch_profile,
         profile_dict))
     profiles.reinit_profiles()
     assert profiles.get_profiles(include_active=False) == profile_dict
@@ -137,7 +137,7 @@ def test_reinit_profiles(monkeypatch, tmpdir):
         "consul_host": "realsolcnsl00.dcae.solutioning.com",
         "docker_host": "realsoldokr00.dcae.solutioning.com:2376" }}
 
-    monkeypatch.setattr(util, "fetch_file_from_nexus", partial(fetch_profile,
+    monkeypatch.setattr(util, "fetch_file_from_web", partial(fetch_profile,
         profile_dict))
     profiles.reinit_profiles()
     all_profiles = profiles.get_profiles(include_active=False)
@@ -146,10 +146,10 @@ def test_reinit_profiles(monkeypatch, tmpdir):
 
     # Test fetch failure
 
-    def fetch_failure(path):
+    def fetch_failure(server_url, path):
         raise RuntimeError("Mysterious error")
 
-    monkeypatch.setattr(util, "fetch_file_from_nexus", fetch_failure)
+    monkeypatch.setattr(util, "fetch_file_from_web", fetch_failure)
 
     with pytest.raises(profiles.ProfilesInitError):
         profiles.reinit_profiles()

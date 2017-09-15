@@ -99,18 +99,22 @@ def test_basic():
 
     generate_dir = os.path.join(TEST_DIR, 'mocked_components', 'model', 'generatedir')
     cmd = "data_format generate --keywords name:1.0.2 {:} ".format(generate_dir).split()
-    out_str = runner.invoke(cli, cmd, obj=obj).output
-    assert '{\n    "dataformatversion": "1.0.0", \n    "jsonschema": {\n        "$schema": "http://json-schema.org/draft-04/schema#", \n        "description": "", \n        "properties": {\n            "foobar": {\n                "description": "", \n                "maxLength": 0, \n                "minLength": 0, \n                "pattern": "", \n                "type": "string"\n            }, \n            "foobar2": {\n                "description": "", \n                "maxLength": 0, \n                "minLength": 0, \n                "pattern": "", \n                "type": "string"\n            }\n        }, \n        "type": "object"\n    }, \n    "self": {\n        "description": "", \n        "name": "name", \n        "version": "1.0.2"\n    }\n}\n' ==  out_str
+    actual = json.loads(runner.invoke(cli, cmd, obj=obj).output)
+    expected = json.loads('{\n    "dataformatversion": "1.0.0", \n    "jsonschema": {\n        "$schema": "http://json-schema.org/draft-04/schema#", \n        "description": "", \n        "properties": {\n            "foobar": {\n                "description": "", \n                "maxLength": 0, \n                "minLength": 0, \n                "pattern": "", \n                "type": "string"\n            }, \n            "foobar2": {\n                "description": "", \n                "maxLength": 0, \n                "minLength": 0, \n                "pattern": "", \n                "type": "string"\n            }\n        }, \n        "type": "object"\n    }, \n    "self": {\n        "description": "", \n        "name": "name", \n        "version": "1.0.2"\n    }\n}\n')
+    assert actual == expected
 
     generate_dir = os.path.join(TEST_DIR, 'mocked_components', 'model', 'generatedir')
     cmd = "data_format generate name:1.0.2 {:} ".format(generate_dir).split()
-    out_str = runner.invoke(cli, cmd, obj=obj).output
-    assert '{\n    "dataformatversion": "1.0.0", \n    "jsonschema": {\n        "$schema": "http://json-schema.org/draft-04/schema#", \n        "description": "", \n        "properties": {\n            "foobar": {\n                "description": "", \n                "type": "string"\n            }, \n            "foobar2": {\n                "description": "", \n                "type": "string"\n            }\n        }, \n        "type": "object"\n    }, \n    "self": {\n        "description": "", \n        "name": "name", \n        "version": "1.0.2"\n    }\n}\n' == out_str
+    actual = json.loads(runner.invoke(cli, cmd, obj=obj).output)
+    expected = json.loads('{\n    "dataformatversion": "1.0.0", \n    "jsonschema": {\n        "$schema": "http://json-schema.org/draft-04/schema#", \n        "description": "", \n        "properties": {\n            "foobar": {\n                "description": "", \n                "type": "string"\n            }, \n            "foobar2": {\n                "description": "", \n                "type": "string"\n            }\n        }, \n        "type": "object"\n    }, \n    "self": {\n        "description": "", \n        "name": "name", \n        "version": "1.0.2"\n    }\n}\n'
+            )
+    assert actual == expected
 
     generate_dir = os.path.join(TEST_DIR, 'mocked_components', 'model', 'generatedir', 'ex1.json')
     cmd = "data_format generate name:1.0.2 {:} ".format(generate_dir).split()
-    out_str = runner.invoke(cli, cmd, obj=obj).output
-    assert '{\n    "dataformatversion": "1.0.0", \n    "jsonschema": {\n        "$schema": "http://json-schema.org/draft-04/schema#", \n        "additionalproperties": true, \n        "description": "", \n        "properties": {\n            "foobar": {\n                "description": "", \n                "type": "string"\n            }\n        }, \n        "required": [\n            "foobar"\n        ], \n        "type": "object"\n    }, \n    "self": {\n        "description": "", \n        "name": "name", \n        "version": "1.0.2"\n    }\n}\n' == out_str
+    actual = json.loads(runner.invoke(cli, cmd, obj=obj).output)
+    expected = json.loads('{\n    "dataformatversion": "1.0.0", \n    "jsonschema": {\n        "$schema": "http://json-schema.org/draft-04/schema#", \n        "additionalproperties": true, \n        "description": "", \n        "properties": {\n            "foobar": {\n                "description": "", \n                "type": "string"\n            }\n        }, \n        "required": [\n            "foobar"\n        ], \n        "type": "object"\n    }, \n    "self": {\n        "description": "", \n        "name": "name", \n        "version": "1.0.2"\n    }\n}\n')
+    assert actual == expected
 
 
 if __name__ == '__main__':

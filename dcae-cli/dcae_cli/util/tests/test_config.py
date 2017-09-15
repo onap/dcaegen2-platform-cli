@@ -59,31 +59,34 @@ def test_init_config_user(monkeypatch):
 
 def test_init_config(monkeypatch):
     monkeypatch.setattr(config, '_init_config_user', lambda: "bigmama")
-    monkeypatch.setattr(dcae_cli.util, 'fetch_file_from_nexus',
-            lambda path: { "db_url": "conn" })
+    monkeypatch.setattr(config, '_init_config_server_url',
+            lambda: "http://some-nexus-in-the-sky.com")
+    monkeypatch.setattr(dcae_cli.util, 'fetch_file_from_web',
+            lambda server_url, path: { "db_url": "conn" })
     monkeypatch.setattr("dcae_cli._version.__version__", "2.X.X")
 
-    expected = {'cli_version': '2.X.X', 'user': 'bigmama', 'db_url': 'conn'}
+    expected = {'cli_version': '2.X.X', 'user': 'bigmama', 'db_url': 'conn',
+            'server_url': 'http://some-nexus-in-the-sky.com'}
     assert expected == config._init_config()
 
     # Test using of db fallback
 
-    monkeypatch.setattr(dcae_cli.util, 'fetch_file_from_nexus',
-            lambda path: { "db_url": "" })
+    monkeypatch.setattr(dcae_cli.util, 'fetch_file_from_web',
+            lambda server_url, path: { "db_url": "" })
 
     assert "sqlite" in config._init_config()["db_url"]
 
-    monkeypatch.setattr(dcae_cli.util, 'fetch_file_from_nexus',
-            lambda path: {})
+    monkeypatch.setattr(dcae_cli.util, 'fetch_file_from_web',
+            lambda server_url, path: {})
 
     assert "sqlite" in config._init_config()["db_url"]
 
     # Simulate error trying to fetch
 
-    def fetch_simulate_error(path):
+    def fetch_simulate_error(server_url, path):
         raise RuntimeError("Simulated error")
 
-    monkeypatch.setattr(dcae_cli.util, 'fetch_file_from_nexus',
+    monkeypatch.setattr(dcae_cli.util, 'fetch_file_from_web',
             fetch_simulate_error)
 
     with pytest.raises(config.ConfigurationInitError):

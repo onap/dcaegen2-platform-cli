@@ -373,21 +373,6 @@ def test_make_instance_map():
     instances_map = dis._make_instances_map(instances_latest_format)
     assert instances_map.get(("sandbox.platform.laika", "0.5.0")) == set(instances_latest_format)
 
-    instances_other_format = ["mike.39f809be-7d13-4799-b8d0-ba0d5358282b.0-5-0.sandbox-platform-laika.rework-central.dcae.com"]
-
-    instances_map = dis._make_instances_map(instances_other_format)
-    assert instances_map.get(("sandbox.platform.laika", "0.5.0")) == set(instances_other_format)
-
-    instances_other_format = ["mike.b5435a8c-ef56-4371-94d8-560a61f7352f.0-5-0.sandbox-platform-laika.solutioning-central.dcae.com"]
-
-    instances_map = dis._make_instances_map(instances_other_format)
-    assert instances_map.get(("sandbox.platform.laika", "0.5.0")) == set(instances_other_format)
-
-    instances_other_format = ["mike.b5435a8c-ef56-4371-94d8-560a61f7352f.0-5-0.sandbox-platform-laika.dcae.com"]
-
-    instances_map = dis._make_instances_map(instances_other_format)
-    assert instances_map.get(("sandbox.platform.laika", "0.5.0")) == set(instances_other_format)
-
 
 def test_get_component_instances(monkeypatch):
     instances = [

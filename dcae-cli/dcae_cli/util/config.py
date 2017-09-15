@@ -50,12 +50,16 @@ def _init_config_user():
         else:
             click.echo("Invalid user id. Please try again.")
 
+def _init_config_server_url():
+    return click.prompt('Please enter the remote server url', type=str).strip()
 
 def _init_config():
     '''Returns an initial dict for populating the config'''
     # Grab the remote config and merge it in
     try:
-        new_config = util.fetch_file_from_nexus("/dcae-cli/config.json")
+        server_url = _init_config_server_url()
+        new_config = util.fetch_file_from_web(server_url, "/dcae-cli/config.json")
+        new_config["server_url"] = server_url
     except:
         # REVIEW: Should we allow users to manually setup their config if not
         # able to pull from remote server?
@@ -82,6 +86,13 @@ def get_config():
     '''Returns the configuration dictionary'''
     return get_pref(get_config_path(), _init_config)
 
+def get_server_url():
+    """Returns the remote server url
+
+    The remote server holds the artifacts that the dcae-cli requires like the
+    seed config json and seed profiles json, and json schemas.
+    """
+    return get_config().get("server_url")
 
 # These functions are used to fetch the configurable path to the various json
 # schema files used in validation.

@@ -26,6 +26,7 @@ import os
 import json
 from click.testing import CliRunner
 import time
+import pytest
 
 from dcae_cli.cli import cli
 from dcae_cli.catalog import MockCatalog
@@ -102,6 +103,7 @@ def test_comp_docker(obj=None):
     assert comp_model_spec == json.loads(spec_str)
 
 
+@pytest.mark.skip(reason="This is not a pure unit test. Need a way to setup dependencies and trigger in the appropriate stages of testing.")
 def test_comp_cdap(obj=None):
     """
     This is not a unit test. It is bigger than that. It Does a full "workflow" test:

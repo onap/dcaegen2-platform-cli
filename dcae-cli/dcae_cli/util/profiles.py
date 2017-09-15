@@ -95,7 +95,8 @@ def reinit_profiles():
     """
     # Grab the remote profiles and merge it in
     try:
-        new_profiles = util.fetch_file_from_nexus("/dcae-cli/profiles.json")
+        server_url = config.get_server_url()
+        new_profiles = util.fetch_file_from_web(server_url, "/dcae-cli/profiles.json")
     except:
         # REVIEW: Should we allow users to manually setup their config if not
         # able to pull from remote server?
