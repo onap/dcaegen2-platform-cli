@@ -51,28 +51,44 @@ def _init_config_user():
             click.echo("Invalid user id. Please try again.")
 
 def _init_config_server_url():
-    return click.prompt('Please enter the remote server url', type=str).strip()
+    return click.prompt("Please enter the remote server url", type=str).strip()
+
+def _init_config_db_url():
+    click.echo("Now we need to set up access to the onboarding catalog")
+    hostname = click.prompt("Please enter the onboarding catalog hostname").strip()
+    user = click.prompt("Please enter the onboarding catalog user").strip()
+    password = click.prompt("Please enter the onboarding catalog password").strip()
+    return "postgresql://{user}:{password}@{hostname}:5432/dcae_onboarding_db".format(
+            hostname=hostname, user=user, password=password)
 
 def _init_config():
     '''Returns an initial dict for populating the config'''
     # Grab the remote config and merge it in
+    new_config = {}
+
     try:
         server_url = _init_config_server_url()
         new_config = util.fetch_file_from_web(server_url, "/dcae-cli/config.json")
         new_config["server_url"] = server_url
     except:
-        # REVIEW: Should we allow users to manually setup their config if not
-        # able to pull from remote server?
-        raise ConfigurationInitError("Could not download configuration from remote server")
+        # Failing to pull seed configuration from remote server is not considered
+        # a problem. Just continue and give user the option to set it up
+        # themselves.
+        if not click.confirm("Could not download initial configuration from remote server. Attempt manually setting up?"):
+            raise ConfigurationInitError("Could not setup dcae-cli configuration")
 
     new_config["user"] = _init_config_user()
     new_config["cli_version"] = _version.__version__
 
     if "db_url" not in new_config or not new_config["db_url"]:
-        # Really you should never get to this point because the remote config
-        # should have a postgres db url.
-        fallback = ''.join(('sqlite:///', os.path.join(get_app_dir(), 'dcae_cli.db')))
-        new_config["db_url"] = fallback
+        # The seed configuration was not provided so manually set up the db
+        # connection
+        new_config["db_url"] = _init_config_db_url()
+
+    if "active_profile" not in new_config:
+        # The seed configuration was not provided which means the profiles will
+        # be the same. The profile will be hardcoded to a an empty default.
+        new_config["active_profile"] = "default"
 
     return new_config
 

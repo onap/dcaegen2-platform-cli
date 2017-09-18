@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## []
+
+* Make server url (url to webserver that has static artifacts like json schemas) a configuration parameter
+* Seeding configuration is no longer a fatal issue
+* Setup database connection via manual user inputs if seed config not there
+* Seeding profiles is no longer a fatal issue
+
 ## [2.9.0]
 
 * Add data format generate command

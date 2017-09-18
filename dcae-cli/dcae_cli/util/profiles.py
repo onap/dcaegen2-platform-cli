@@ -27,6 +27,7 @@ import os
 from collections import namedtuple
 
 import six
+import click
 
 from dcae_cli import util
 from dcae_cli.util import get_app_dir, get_pref, write_pref
@@ -98,9 +99,14 @@ def reinit_profiles():
         server_url = config.get_server_url()
         new_profiles = util.fetch_file_from_web(server_url, "/dcae-cli/profiles.json")
     except:
-        # REVIEW: Should we allow users to manually setup their config if not
-        # able to pull from remote server?
-        raise ProfilesInitError("Could not download profiles from remote server")
+        # Failing to pull seed profiles from remote server is not considered
+        # a problem. Just continue and give user the option to use an empty
+        # default.
+        if click.confirm("Could not download initial profiles from remote server. Set empty default?"):
+            new_profiles = {"default": { "consul_host": "", "config_binding_service": "", 
+                "cdap_broker": "", "docker_host": ""}}
+        else:
+            raise ProfilesInitError("Could not setup dcae-cli profiles")
 
     profiles_path = get_profiles_path()
 
