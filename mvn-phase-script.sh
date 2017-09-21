@@ -18,6 +18,7 @@
 #
 # ECOMP is a trademark and service mark of AT&T Intellectual Property.
 
+
 set -ex
 
 
@@ -25,75 +26,38 @@ echo "running script: [$0] for module [$1] at stage [$2]"
 
 MVN_PROJECT_MODULEID="$1"
 MVN_PHASE="$2"
-
-
 PROJECT_ROOT=$(dirname $0)
-
-FQDN="${MVN_PROJECT_GROUPID}.${MVN_PROJECT_ARTIFACTID}"
-if [ "$MVN_PROJECT_MODULEID" == "__" ]; then
-  MVN_PROJECT_MODULEID=""
-fi
-
-if [[ "$MVN_PROJECT_VERSION" == *SNAPSHOT ]]; then
-  echo "=> for SNAPSHOT artifact build"
-  MVN_DEPLOYMENT_TYPE='SNAPSHOT'
-else
-  echo "=> for STAGING/RELEASE artifact build"
-  MVN_DEPLOYMENT_TYPE='STAGING'
-fi
-echo "MVN_DEPLOYMENT_TYPE is             [$MVN_DEPLOYMENT_TYPE]"
-
-
-TIMESTAMP=$(date +%C%y%m%dT%H%M%S)
 
 # expected environment variables
 if [ -z "${MVN_NEXUSPROXY}" ]; then
     echo "MVN_NEXUSPROXY environment variable not set.  Cannot proceed"
-    exit
+    exit 1
 fi
-MVN_NEXUSPROXY_HOST=$(echo "$MVN_NEXUSPROXY" |cut -f3 -d'/' | cut -f1 -d':')
-echo "=> Nexus Proxy at $MVN_NEXUSPROXY_HOST, $MVN_NEXUSPROXY"
-
-if [ -z "$WORKSPACE" ]; then
-    WORKSPACE=$(pwd)
-fi
-
 if [ -z "$SETTINGS_FILE" ]; then
     echo "SETTINGS_FILE environment variable not set.  Cannot proceed"
-    exit
+    exit 2
 fi
-   
 
 
-# mvn phase in life cycle
-MVN_PHASE="$2"
+source "${PROJECT_ROOT}"/mvn-phase-lib.sh
 
 
-echo "MVN_PROJECT_MODULEID is            [$MVN_PROJECT_MODULEID]"
-echo "MVN_PHASE is                       [$MVN_PHASE]"
-echo "MVN_PROJECT_GROUPID is             [$MVN_PROJECT_GROUPID]"
-echo "MVN_PROJECT_ARTIFACTID is          [$MVN_PROJECT_ARTIFACTID]"
-echo "MVN_PROJECT_VERSION is             [$MVN_PROJECT_VERSION]"
-echo "MVN_NEXUSPROXY is                  [$MVN_NEXUSPROXY]"
-echo "MVN_RAWREPO_BASEURL_UPLOAD is      [$MVN_RAWREPO_BASEURL_UPLOAD]"
-echo "MVN_RAWREPO_BASEURL_DOWNLOAD is    [$MVN_RAWREPO_BASEURL_DOWNLOAD]"
-MVN_RAWREPO_HOST=$(echo "$MVN_RAWREPO_BASEURL_UPLOAD" | cut -f3 -d'/' |cut -f1 -d':')
-echo "MVN_RAWREPO_HOST is                [$MVN_RAWREPO_HOST]"
-echo "MVN_RAWREPO_SERVERID is            [$MVN_RAWREPO_SERVERID]"
-echo "MVN_DOCKERREGISTRY_DAILY is        [$MVN_DOCKERREGISTRY_DAILY]"
-echo "MVN_DOCKERREGISTRY_RELEASE is      [$MVN_DOCKERREGISTRY_RELEASE]"
+# This is the base for where "deploy" will upload
+# MVN_NEXUSPROXY is set in the pom.xml
+REPO=$MVN_NEXUSPROXY/content/sites/raw/$MVN_PROJECT_GROUPID
+
+TIMESTAMP=$(date +%C%y%m%dT%H%M%S)
+export BUILD_NUMBER="${TIMESTAMP}"
 
 
-source "${PROJECT_ROOT}"/mvn-phase-lib.sh 
+shift 2
 
-
-# Customize the section below for each project
 case $MVN_PHASE in
 clean)
   echo "==> clean phase script"
   clean_templated_files
   clean_tox_files
-  rm -rf ./venv-* ./*.wgn
+  rm -rf ./venv-* ./*.wgn ./site ./coverage.xml ./xunit-results.xml
   ;;
 generate-sources)
   echo "==> generate-sources phase script"
@@ -104,6 +68,9 @@ compile)
   ;;
 test)
   echo "==> test phase script"
+  set +e
+  run_tox_test
+  set -e
   ;;
 package)
   echo "==> package phase script"
@@ -113,30 +80,19 @@ install)
   ;;
 deploy)
   echo "==> deploy phase script"
-
   case $MVN_PROJECT_MODULEID in
-  platformdoc)
-    set -x
-    CURDIR=$(pwd)
-    virtualenv ./venv-doc
-    source ./venv-doc/bin/activate
-    pip install --upgrade pip
-    pip install --upgrade mkdocs mkdocs-material
-    pip freeze
-
-    mkdocs build
-    build_and_push_docker
-    deactivate
-    rm -rf ./venv-doc
-
-    # build docker image from Docker file (under module dir) and push to registry
-    build_and_push_docker
+  dcae-cli)
+    ;;
+  component-json-schemas)
+    JSON_FILES_WITH_PATH=$(find . -name *json)
+    for JSON_FILE in $JSON_FILES_WITH_PATH; do
+      upload_raw_file "$JSON_FILE"
+    done
     ;;
   *)
-    echo "====> unknown mvn project module"
+    #generate_pypirc_then_publish
     ;;
   esac
-
   ;;
 *)
   echo "==> unprocessed phase"
