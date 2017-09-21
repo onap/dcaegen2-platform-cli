@@ -251,7 +251,7 @@ upload_raw_file()
   if [ "$MVN_DEPLOYMENT_TYPE" == 'SNAPSHOT' ]; then
     SEND_TO="${REPO}/${MVN_PROJECT_GROUPID}/snapshots"
   elif [ "$MVN_DEPLOYMENT_TYPE" == 'STAGING' ]; then
-    SEND_TO="${REPO}/{$MVN_PROJECT_GROUPID}/releases"
+    SEND_TO="${REPO}/${MVN_PROJECT_GROUPID}/releases"
   else
     echo "Unreconfnized deployment type, quit"
     exit
