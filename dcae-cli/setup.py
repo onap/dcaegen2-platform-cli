@@ -32,7 +32,7 @@ with open(os.path.join(setup_dir, 'dcae_cli', '_version.py')) as file:
 
 
 setup(
-    name = "dcae_cli",
+    name = "onap-dcae-cli",
     version = __version__,
     packages = find_packages(),
     author = "Michael Hwang, Paul Triantafyllou, Tommy Carpenter",
@@ -48,12 +48,11 @@ setup(
                       'SQLAlchemy-Utils',
                       'click',
                       'jsonschema',
-                      'docker-py>=1.10,<2',
                       'terminaltables',
                       'psycopg2',
                       'genson',
-                      'python-discovery-client>=2.0.0',
-                      'python-dockering>=1.0.0,<2.0.0'
+                      'onap-dcae-discovery-client>=2.0.0',
+                      'onap-dcae-dockering>=1.0.0,<2.0.0'
                       ],
     tests_require=['pytest',
                    'mock'],

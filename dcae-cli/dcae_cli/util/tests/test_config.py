@@ -66,7 +66,8 @@ def test_init_config(monkeypatch):
     monkeypatch.setattr("dcae_cli._version.__version__", "2.X.X")
 
     expected = {'cli_version': '2.X.X', 'user': 'bigmama', 'db_url': 'conn',
-            'server_url': 'http://some-nexus-in-the-sky.com'}
+            'server_url': 'http://some-nexus-in-the-sky.com',
+            'active_profile': 'default' }
     assert expected == config._init_config()
 
     # Test using of db fallback
@@ -74,12 +75,20 @@ def test_init_config(monkeypatch):
     monkeypatch.setattr(dcae_cli.util, 'fetch_file_from_web',
             lambda server_url, path: { "db_url": "" })
 
-    assert "sqlite" in config._init_config()["db_url"]
+    db_url = "postgresql://king:of@mountain:5432/dcae_onboarding_db"
+
+    def fake_init_config_db_url():
+        return db_url
+
+    monkeypatch.setattr(config, "_init_config_db_url",
+            fake_init_config_db_url)
+
+    assert db_url == config._init_config()["db_url"]
 
     monkeypatch.setattr(dcae_cli.util, 'fetch_file_from_web',
             lambda server_url, path: {})
 
-    assert "sqlite" in config._init_config()["db_url"]
+    assert db_url == config._init_config()["db_url"]
 
     # Simulate error trying to fetch
 
@@ -88,6 +97,8 @@ def test_init_config(monkeypatch):
 
     monkeypatch.setattr(dcae_cli.util, 'fetch_file_from_web',
             fetch_simulate_error)
+    # Case when user opts out of manually setting up
+    monkeypatch.setattr(click, "confirm", lambda msg: False)
 
     with pytest.raises(config.ConfigurationInitError):
         config._init_config()

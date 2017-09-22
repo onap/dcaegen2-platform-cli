@@ -150,6 +150,8 @@ def test_reinit_profiles(monkeypatch, tmpdir):
         raise RuntimeError("Mysterious error")
 
     monkeypatch.setattr(util, "fetch_file_from_web", fetch_failure)
+    # Case when user opts out of manually setting up
+    monkeypatch.setattr(click, "confirm", lambda msg: False)
 
     with pytest.raises(profiles.ProfilesInitError):
         profiles.reinit_profiles()
