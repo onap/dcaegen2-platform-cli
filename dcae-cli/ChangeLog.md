@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * Seeding configuration is no longer a fatal issue
 * Setup database connection via manual user inputs if seed config not there
 * Seeding profiles is no longer a fatal issue
+* Dynamically fetch Docker login credentials from Consul to use to authenticate when creating Docker client.
 
 ## [2.9.0]
 

@@ -462,6 +462,23 @@ def create_config(user, cname, cver, params, interface_map, instance_map, dmaap_
     return conf_key, conf, rels_key, rels, dmaap_key, dmaap_map_just_info
 
 
+def get_docker_logins(host=consul_host):
+    """Get Docker logins from Consul
+
+    Returns
+    -------
+    List of objects where the objects must be of the form
+        {"registry": .., "username":.., "password":.. }
+    """
+    key = "dockerlogin_info"
+    (index, val) = Consul(host).kv.get(key)
+
+    if val:
+        return json.loads(val['Value'].decode("utf-8"))
+    else:
+        return []
+
+
 def push_config(conf_key, conf, rels_key, rels, dmaap_key, dmaap_map, host=consul_host):
     '''Uploads the config and rels to Consul'''
     cons = Consul(host)

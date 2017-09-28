@@ -74,10 +74,10 @@ def build_envs(profile, docker_config, instance_name):
 # TODO: Consolidate these two docker client methods. Need ability to invoke local
 # vs remote Docker engine
 
-def get_docker_client(profile):
-    base_url = "tcp://{0}".format(profile.docker_host)
+def get_docker_client(profile, logins=[]):
+    hostname, port = profile.docker_host.split(":")
     try:
-        client = docker.Client(base_url=base_url)
+        client = doc.create_client(hostname, port, logins=logins)
         client.ping()
         return client
     except:
@@ -162,13 +162,21 @@ def _run_registrator(client, external_ip=None):
 # High level calls
 #
 
-def deploy_component(profile, image, instance_name, docker_config, should_wait=False):
+def deploy_component(profile, image, instance_name, docker_config, should_wait=False,
+        logins=[]):
     """Deploy Docker component
 
     This calls runs a Docker container detached.  The assumption is that the Docker
     host already has registrator running.
 
     TODO: Split out the wait functionality
+
+    Args
+    ----
+    logins (list): List of objects where the objects are each a docker login of
+    the form:
+
+        {"registry": .., "username":.., "password":.. }
 
     Returns
     -------
@@ -188,7 +196,7 @@ def deploy_component(profile, image, instance_name, docker_config, should_wait=F
         raise DockerConstructionError("Could not resolve the docker hostname:{0}".format(dh))
 
     envs = build_envs(profile, docker_config, instance_name)
-    client = get_docker_client(profile)
+    client = get_docker_client(profile, logins=logins)
 
     config = doc.create_container_config(client, image, envs, hcp)
     return _run_container(client, config, name=instance_name, wait=should_wait)

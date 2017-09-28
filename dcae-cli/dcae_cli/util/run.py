@@ -167,17 +167,21 @@ def run_component(user, cname, cver, catalog, additional_user, attached, force,
             image = catalog.get_docker_image(cname, cver)
             docker_config = catalog.get_docker_config(cname, cver)
 
+            docker_logins = dis.get_docker_logins()
+
             if should_wait:
                 du.deploy_component(profile, image, instance_name, docker_config,
-                        should_wait=True)
+                        should_wait=True, logins=docker_logins)
             else:
-                result = du.deploy_component(profile, image, instance_name, docker_config)
+                result = du.deploy_component(profile, image, instance_name, docker_config,
+                        logins=docker_logins)
                 log.debug(result)
 
                 if result:
                     log.info("Deployed {0}. Verifying..".format(instance_name))
 
-                    max_wait = 15 # 15s
+                    # TODO: Be smarter here but for now wait longer i.e. 5min
+                    max_wait = 300 # 300s == 5min
 
                     if _verify_component(instance_name, max_wait, dis.consul_host):
                         log.info("Container is up and healthy")
