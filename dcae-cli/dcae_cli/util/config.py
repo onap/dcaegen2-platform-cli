@@ -110,6 +110,14 @@ def get_server_url():
     """
     return get_config().get("server_url")
 
+def get_docker_logins_key():
+    """Returns the Consul key that Docker logins are stored under
+
+    Default is "docker_plugin/docker_logins" which matches up with the docker
+    plugin default.
+    """
+    return get_config().get("docker_logins_key", "docker_plugin/docker_logins")
+
 # These functions are used to fetch the configurable path to the various json
 # schema files used in validation.
 

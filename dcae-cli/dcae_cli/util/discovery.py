@@ -37,6 +37,7 @@ from consul import Consul
 from dcae_cli.util.logger import get_logger
 from dcae_cli.util.exc import DcaeException
 from dcae_cli.util.profiles import get_profile
+from dcae_cli.util.config import get_docker_logins_key
 
 
 logger = get_logger('Discovery')
@@ -470,7 +471,7 @@ def get_docker_logins(host=consul_host):
     List of objects where the objects must be of the form
         {"registry": .., "username":.., "password":.. }
     """
-    key = "dockerlogin_info"
+    key = get_docker_logins_key()
     (index, val) = Consul(host).kv.get(key)
 
     if val:
