@@ -103,8 +103,9 @@ def reinit_profiles():
         # a problem. Just continue and give user the option to use an empty
         # default.
         if click.confirm("Could not download initial profiles from remote server. Set empty default?"):
-            new_profiles = {"default": { "consul_host": "", "config_binding_service": "", 
-                "cdap_broker": "", "docker_host": ""}}
+            new_profiles = {"default": { "consul_host": "",
+                "config_binding_service": "config_binding_service",
+                "cdap_broker": "cdap_broker", "docker_host": ""}}
         else:
             raise ProfilesInitError("Could not setup dcae-cli profiles")
 

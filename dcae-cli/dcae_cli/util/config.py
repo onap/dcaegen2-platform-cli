@@ -69,7 +69,6 @@ def _init_config():
     try:
         server_url = _init_config_server_url()
         new_config = util.fetch_file_from_web(server_url, "/dcae-cli/config.json")
-        new_config["server_url"] = server_url
     except:
         # Failing to pull seed configuration from remote server is not considered
         # a problem. Just continue and give user the option to set it up
@@ -77,6 +76,8 @@ def _init_config():
         if not click.confirm("Could not download initial configuration from remote server. Attempt manually setting up?"):
             raise ConfigurationInitError("Could not setup dcae-cli configuration")
 
+    # UPDATE: Keeping the server url even though the config was not found there.
+    new_config["server_url"] = server_url
     new_config["user"] = _init_config_user()
     new_config["cli_version"] = _version.__version__
 
@@ -123,11 +124,11 @@ def get_docker_logins_key():
 
 def get_path_component_spec():
     return get_config().get("path_component_spec",
-            "/schemas/component-specification/dcae-cli-v1/component-spec-schema.json")
+            "/component-json-schemas/component-specification/dcae-cli-v1/component-spec-schema.json")
 
 def get_path_data_format():
     return get_config().get("path_data_format",
-            "/schemas/data-format/dcae-cli-v1/data-format-schema.json")
+            "/component-json-schemas/data-format/dcae-cli-v1/data-format-schema.json")
 
 def get_active_profile():
     return get_config().get("active_profile", None)
