@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
-    "title": "Data format specification schema Version 1.0",
+    "title": "Data format specification schema Version 1.0.1",
     "type": "object",
     "oneOf": [{
         "properties": {
@@ -13,10 +13,13 @@
             "reference": {
 
                 "type": "object",
-                "description": "A reference to an external schema - name/version is used to access the artifact",
+                "description": "A reference to an external schema - name/version or url, if specified, is used to access the artifact",
                 "properties": {
                     "name": {
                         "$ref": "#/definitions/name"
+                    },
+                    "url": {
+                        "$ref": "#/definitions/url"
                     },
                     "version": {
                         "$ref": "#/definitions/version"
@@ -104,6 +107,9 @@
         "additionalProperties": false
     }],
     "definitions": {
+         "url": {
+             "format": "uri"
+        },
         "name": {
             "type": "string"
         },
@@ -138,6 +144,7 @@
                 "JSON",
                 "Delimited Format",
                 "XML",
+                "Protocol Buffer",
                 "Unstructured"
             ]
         },
@@ -199,7 +206,7 @@
         },
         "dataformatversion": {
             "type": "string",
-            "enum": ["1.0.0"]
+            "enum": ["1.0.0", "1.0.1"]
         }
     }
 }
