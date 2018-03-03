@@ -1,7 +1,7 @@
 # ============LICENSE_START=======================================================
 # org.onap.dcae
 # ================================================================================
-# Copyright (c) 2017 AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2017-2018 AT&T Intellectual Property. All rights reserved.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -110,8 +110,6 @@ def _validate(fetch_schema_func, schema_path, spec):
 _validate_using_nexus = partial(_validate, _fetch_schema)
 
 
-_path_component_spec = cli_config.get_path_component_spec()
-
 def apply_defaults(properties_definition, properties):
     """Utility method to enforce expected defaults
 
@@ -159,7 +157,7 @@ def apply_defaults_docker_config(config):
     """
     # Apply health check defaults
     healthcheck_type = config["healthcheck"]["type"]
-    component_spec = _fetch_schema(_path_component_spec)
+    component_spec = _fetch_schema(cli_config.get_path_component_spec())
 
     if healthcheck_type in ["http", "https"]:
         apply_defaults_func = partial(apply_defaults,
@@ -176,7 +174,7 @@ def apply_defaults_docker_config(config):
     return config
 
 def validate_component(spec):
-    _validate_using_nexus(_path_component_spec, spec)
+    _validate_using_nexus(cli_config.get_path_component_spec(), spec)
 
     # REVIEW: Could not determine how to do this nicely in json schema. This is
     # not ideal. We want json schema to be the "it" for validation.

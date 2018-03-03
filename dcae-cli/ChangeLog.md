@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## []
+## [2.10.0]
 
 * Make server url (url to webserver that has static artifacts like json schemas) a configuration parameter
 * Seeding configuration is no longer a fatal issue
@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * Seeding profiles is no longer a fatal issue
 * Dynamically fetch Docker login credentials from Consul to use to authenticate when creating Docker client.
 * Make docker login key into a configuration param
+* Clean up the hard coupling to the user configuration particularly in the discovery module
 
 ## [2.9.0]
 

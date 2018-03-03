@@ -1,7 +1,7 @@
 # ============LICENSE_START=======================================================
 # org.onap.dcae
 # ================================================================================
-# Copyright (c) 2017 AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2017-2018 AT&T Intellectual Property. All rights reserved.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -183,13 +183,15 @@ def run_component(user, cname, cver, catalog, additional_user, attached, force,
                     # TODO: Be smarter here but for now wait longer i.e. 5min
                     max_wait = 300 # 300s == 5min
 
-                    if _verify_component(instance_name, max_wait, dis.consul_host):
+                    if _verify_component(instance_name, max_wait,
+                            dis.default_consul_host()):
                         log.info("Container is up and healthy")
 
                         # This block of code is used to construct the delivery
                         # urls for data router subscribers and to display it for
                         # users to help with manually provisioning feeds.
-                        results = dis.lookup_instance(dis.consul_host, instance_name)
+                        results = dis.lookup_instance(dis.default_consul_host(),
+                                instance_name)
                         target_host = dis.parse_instance_lookup(results)
 
                         dmaap_map = _update_delivery_urls(spec, target_host, dmaap_map)
