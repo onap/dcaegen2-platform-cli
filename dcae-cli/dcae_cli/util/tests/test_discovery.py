@@ -1,7 +1,7 @@
 # ============LICENSE_START=======================================================
 # org.onap.dcae
 # ================================================================================
-# Copyright (c) 2017 AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2017-2018 AT&T Intellectual Property. All rights reserved.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ from copy import deepcopy
 import pytest
 
 from dcae_cli.util import discovery as dis
-from dcae_cli.util.discovery import create_config, Consul, config_context, consul_host, DiscoveryNoDownstreamComponentError
+from dcae_cli.util.discovery import create_config, Consul, config_context, DiscoveryNoDownstreamComponentError
 
 
 user = 'bob'
@@ -177,8 +177,8 @@ def test_create_config():
     assert dmaap_map == {'some-config-key': {'topic_url': 'http://some-topic-url.com/abc'}}
 
 
-
-def test_config_context():
+@pytest.mark.skip(reason="Not a pure unit test")
+def test_config_context(mock_cli_config):
     interface_map = {'param1': [('foo.bar.comp1', '1.1.1'),
                                 ('foo.bar.comp2', '2.2.2')],
                      'param2': [('foo.bar.comp3', '3.3.3')]
@@ -200,7 +200,7 @@ def test_config_context():
             'bob.bbb222.1-1-1.foo-bar-comp1.suffix',
             'bob.ddd444.3-3-3.foo-bar-comp3.suffix']
 
-    c = Consul(consul_host)
+    c = Consul(dis.default_consul_host())
     with config_context(user, cname, cver, params, interface_map, instance_map,
             config_key_map, instance_prefix=inst_pref) as (instance,_):
         assert json.loads(c.kv.get(ckey)[1]['Value'].decode('utf-8')) == expected_conf

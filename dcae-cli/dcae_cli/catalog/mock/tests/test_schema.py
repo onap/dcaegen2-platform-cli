@@ -1,7 +1,7 @@
 # ============LICENSE_START=======================================================
 # org.onap.dcae
 # ================================================================================
-# Copyright (c) 2017 AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2017-2018 AT&T Intellectual Property. All rights reserved.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -209,7 +209,7 @@ cdap_component_test = r'''
 '''
 
 
-def test_basic():
+def test_basic(mock_cli_config):
     validate_component(json.loads(component_test))
     validate_format(json.loads(format_test))
     validate_component(json.loads(cdap_component_test))
@@ -232,7 +232,7 @@ def test_basic():
 
 
 
-def test_validate_docker_config():
+def test_validate_docker_config(mock_cli_config):
 
     def compose_spec(config):
         spec = json.loads(component_test)
@@ -282,7 +282,7 @@ def test_validate_docker_config():
             validate_component(spec)
 
 
-def test_validate_cdap_config():
+def test_validate_cdap_config(mock_cli_config):
 
     def compose_spec(config):
         spec = json.loads(cdap_component_test)
@@ -350,7 +350,7 @@ def test_apply_defaults():
             'location': {'lat': '40', 'long': '75'}}
 
 
-def test_apply_defaults_docker_config():
+def test_apply_defaults_docker_config(mock_cli_config):
     # Test: Adding of missing expected properties for http
     dc = { "healthcheck": { "type": "http", "endpoint": "/foo" } }
     actual = apply_defaults_docker_config(dc)

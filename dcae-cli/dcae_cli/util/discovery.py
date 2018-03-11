@@ -1,7 +1,7 @@
 # ============LICENSE_START=======================================================
 # org.onap.dcae
 # ================================================================================
-# Copyright (c) 2017 AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2017-2018 AT&T Intellectual Property. All rights reserved.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -42,8 +42,6 @@ from dcae_cli.util.config import get_docker_logins_key
 
 logger = get_logger('Discovery')
 
-active_profile = get_profile()
-consul_host = active_profile.consul_host
 # NOTE: Removed the suffix completely. The useful piece of the suffix was the
 # location but it was implemented in a static fashion (hardcoded). Rather than
 # enhancing the existing approach and making the suffix dynamic (to support
@@ -57,6 +55,18 @@ class DiscoveryError(DcaeException):
 
 class DiscoveryNoDownstreamComponentError(DiscoveryError):
     pass
+
+
+def default_consul_host():
+    """Return default consul host
+
+    This method was created to purposefully make fetching the default lazier than
+    the previous impl. The previous impl had the default as a global variable and
+    thus requiring the configuration to be setup before doing anything further.
+    The pain point of that impl is in unit testing where now all code that
+    imported this module had a strict dependency upon the impure configuration.
+    """
+    return get_profile().consul_host
 
 
 def replace_dots(comp_name, reverse=False):
@@ -215,7 +225,7 @@ def _make_instances_map(instances):
     return mapping
 
 
-def get_user_instances(user, consul_host=consul_host, filter_instances_func=is_healthy):
+def get_user_instances(user, consul_host=None, filter_instances_func=is_healthy):
     '''Get a user's instance map
 
     Args:
@@ -227,6 +237,7 @@ def get_user_instances(user, consul_host=consul_host, filter_instances_func=is_h
     --------
     Dict whose keys are component (name,version) tuples and values are list of component instance names
     '''
+    consul_host = consul_host if consul_host == None else default_consul_host()
     filter_func = partial(filter_instances_func, consul_host)
     instances = list(filter(filter_func, _get_instances(consul_host, user)))
 
@@ -260,16 +271,17 @@ def _get_component_instances(filter_instances_func, user, cname, cver, consul_ho
     # return
     return list(instance_map.get((cname_dashless, cver), []))
 
-def get_healthy_instances(user, cname, cver, consul_host=consul_host):
+def get_healthy_instances(user, cname, cver, consul_host=None):
     """Lists healthy instances of a particular component for a given user
 
     Returns
     -------
     List of strings where the strings are fully qualified instance names
     """
+    consul_host = consul_host if consul_host == None else default_consul_host()
     return _get_component_instances(is_healthy, user, cname, cver, consul_host)
 
-def get_defective_instances(user, cname, cver, consul_host=consul_host):
+def get_defective_instances(user, cname, cver, consul_host=None):
     """Lists *not* running instances of a particular component for a given user
 
     This means that there are component instances that are sitting out there
@@ -282,6 +294,7 @@ def get_defective_instances(user, cname, cver, consul_host=consul_host):
     def is_not_healthy(consul_host, component):
         return not is_healthy(consul_host, component)
 
+    consul_host = consul_host if consul_host == None else default_consul_host()
     return _get_component_instances(is_not_healthy, user, cname, cver, consul_host)
 
 
@@ -321,8 +334,9 @@ def _create_dmaap_key(config_key):
     return "{:}:dmaap".format(config_key)
 
 
-def clear_user_instances(user, host=consul_host):
+def clear_user_instances(user, host=None):
     '''Removes all Consul key:value entries for a given user'''
+    host = host if host == None else default_consul_host()
     cons = Consul(host)
     cons.kv.delete(user, recurse=True)
 
@@ -463,7 +477,7 @@ def create_config(user, cname, cver, params, interface_map, instance_map, dmaap_
     return conf_key, conf, rels_key, rels, dmaap_key, dmaap_map_just_info
 
 
-def get_docker_logins(host=consul_host):
+def get_docker_logins(host=None):
     """Get Docker logins from Consul
 
     Returns
@@ -472,6 +486,7 @@ def get_docker_logins(host=consul_host):
         {"registry": .., "username":.., "password":.. }
     """
     key = get_docker_logins_key()
+    host = host if host == None else default_consul_host()
     (index, val) = Consul(host).kv.get(key)
 
     if val:
@@ -480,20 +495,22 @@ def get_docker_logins(host=consul_host):
         return []
 
 
-def push_config(conf_key, conf, rels_key, rels, dmaap_key, dmaap_map, host=consul_host):
+def push_config(conf_key, conf, rels_key, rels, dmaap_key, dmaap_map, host=None):
     '''Uploads the config and rels to Consul'''
+    host = host if host == None else default_consul_host()
     cons = Consul(host)
     for k, v in ((conf_key, conf), (rels_key, rels), (dmaap_key, dmaap_map)):
         cons.kv.put(k, json.dumps(v))
 
 
-def remove_config(config_key, host=consul_host):
+def remove_config(config_key, host=None):
     """Deletes a config from Consul
 
     Returns
     -------
     True when all artifacts have been successfully deleted else False
     """
+    host = host if host == None else default_consul_host()
     cons = Consul(host)
     results = [ cons.kv.delete(k) for k in (config_key, _create_rels_key(config_key), \
             _create_dmaap_key(config_key)) ]
@@ -529,7 +546,7 @@ def _apply_inputs(config, inputs_map):
 @contextlib.contextmanager
 def config_context(user, cname, cver, params, interface_map, instance_map,
         config_key_map, dmaap_map={}, inputs_map={}, instance_prefix=None,
-        host=consul_host, always_cleanup=True, force_config=False):
+        host=None, always_cleanup=True, force_config=False):
     '''Convenience utility for creating configs and cleaning them up
 
     Args
@@ -541,6 +558,8 @@ def config_context(user, cname, cver, params, interface_map, instance_map,
         Config will continue to be created even if there are no downstream compatible
         component when this flag is set to True. Default is False.
     '''
+    host = host if host == None else default_consul_host()
+
     try:
         conf_key, conf, rels_key, rels, dmaap_key, dmaap_map = create_config(
                 user, cname, cver, params, interface_map, instance_map, dmaap_map,

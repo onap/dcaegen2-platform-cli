@@ -1,7 +1,7 @@
 # ============LICENSE_START=======================================================
 # org.onap.dcae
 # ================================================================================
-# Copyright (c) 2017 AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2017-2018 AT&T Intellectual Property. All rights reserved.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ def _get_spec(path):
         return json.load(file)
 
 
-def test_basic():
+def test_basic(mock_cli_config):
 
     obj = {'catalog': MockCatalog(purge_existing=True, db_name='dcae_cli.test.db', enforce_image=False),
            'config': {'user': 'test-user'}}
