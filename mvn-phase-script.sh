@@ -39,6 +39,11 @@ if [ -z "$SETTINGS_FILE" ]; then
 fi
 
 
+if ! wget -O ${PROJECT_ROOT}/mvn-phase-lib.sh \
+  "$MVN_RAWREPO_BASEURL_DOWNLOAD"/org.onap.dcaegen2.utils/R2/scripts/mvn-phase-lib.sh; then
+  echo "Fail to download mvn-phase-lib.sh"
+  exit 1
+fi
 source "${PROJECT_ROOT}"/mvn-phase-lib.sh
 
 
@@ -69,7 +74,13 @@ compile)
 test)
   echo "==> test phase script"
   set +e
-  run_tox_test
+  case $MVN_PROJECT_MODULEID in
+  dcae-cli)
+    run_tox_test
+    ;;
+  *)
+    ;;
+  esac
   set -e
   ;;
 package)
