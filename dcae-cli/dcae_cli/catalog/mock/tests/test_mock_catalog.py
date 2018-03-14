@@ -277,10 +277,11 @@ _cdap_spec={
 }
 
 
-def test_component_basic(mock_cli_config, catalog=None):
+def test_component_basic(mock_cli_config, mock_db_url, catalog=None):
     '''Tests basic component usage of MockCatalog'''
     if catalog is None:
-        mc = MockCatalog(db_name='dcae_cli.test.db', purge_existing=True, enforce_image=False)
+        mc = MockCatalog(db_name='dcae_cli.test.db', purge_existing=True,
+                enforce_image=False, db_url=mock_db_url)
     else:
         mc = catalog
 
@@ -312,10 +313,11 @@ def test_component_basic(mock_cli_config, catalog=None):
     assert cver == '1.0.0'
 
 
-def test_format_basic(mock_cli_config, catalog=None):
+def test_format_basic(mock_cli_config, mock_db_url, catalog=None):
     '''Tests basic data format usage of MockCatalog'''
     if catalog is None:
-        mc = MockCatalog(db_name='dcae_cli.test.db', purge_existing=True)
+        mc = MockCatalog(db_name='dcae_cli.test.db', purge_existing=True,
+                db_url=mock_db_url)
     else:
         mc = catalog
 
@@ -351,10 +353,11 @@ def test_format_basic(mock_cli_config, catalog=None):
     assert spec['self']['description'] == new_descr
 
 
-def test_discovery(mock_cli_config, catalog=None):
+def test_discovery(mock_cli_config, mock_db_url, catalog=None):
     '''Tests creation of discovery objects'''
     if catalog is None:
-        mc = MockCatalog(db_name='dcae_cli.test.db', purge_existing=True, enforce_image=False)
+        mc = MockCatalog(db_name='dcae_cli.test.db', purge_existing=True,
+                enforce_image=False, db_url=mock_db_url)
     else:
         mc = catalog
 
@@ -393,10 +396,11 @@ def _format_tuple_set(*dds):
     return set(map(_format_tuple, dds))
 
 
-def test_comp_list(mock_cli_config, catalog=None):
+def test_comp_list(mock_cli_config, mock_db_url, catalog=None):
     '''Tests the list functionality of the catalog'''
     if catalog is None:
-        mc = MockCatalog(db_name='dcae_cli.test.db', purge_existing=True, enforce_image=False)
+        mc = MockCatalog(db_name='dcae_cli.test.db', purge_existing=True,
+                enforce_image=False, db_url=mock_db_url)
     else:
         mc = catalog
 
@@ -479,10 +483,11 @@ def test_comp_list(mock_cli_config, catalog=None):
     assert len(components) == 4
 
 
-def test_format_list(mock_cli_config, catalog=None):
+def test_format_list(mock_cli_config, mock_db_url, catalog=None):
     '''Tests the list functionality of the catalog'''
     if catalog is None:
-        mc = MockCatalog(db_name='dcae_cli.test.db', purge_existing=True, enforce_image=False)
+        mc = MockCatalog(db_name='dcae_cli.test.db', purge_existing=True,
+                enforce_image=False, db_url=mock_db_url)
     else:
         mc = catalog
 
@@ -523,10 +528,11 @@ def test_format_list(mock_cli_config, catalog=None):
     assert len(formats) == 2
 
 
-def test_component_add_cdap(mock_cli_config, catalog=None):
+def test_component_add_cdap(mock_cli_config, mock_db_url, catalog=None):
     '''Adds a mock CDAP application'''
     if catalog is None:
-        mc = MockCatalog(db_name='dcae_cli.test.db', purge_existing=True)
+        mc = MockCatalog(db_name='dcae_cli.test.db', purge_existing=True,
+                db_url=mock_db_url)
     else:
         mc = catalog
 
@@ -548,9 +554,9 @@ def test_component_add_cdap(mock_cli_config, catalog=None):
     assert _cdap_spec == spec_out
 
 
-def test_get_discovery_from_spec(mock_cli_config):
+def test_get_discovery_from_spec(mock_cli_config, mock_db_url):
     mc = MockCatalog(db_name='dcae_cli.test.db', purge_existing=True,
-            enforce_image=False)
+            enforce_image=False, db_url=mock_db_url)
 
     user = "test_get_discovery_from_spec"
 
@@ -635,9 +641,10 @@ def test_get_discovery_from_spec(mock_cli_config):
     assert actual_dmaap_config_keys == ([], [])
 
 
-def test_get_unpublished_formats(mock_cli_config, catalog=None):
+def test_get_unpublished_formats(mock_cli_config, mock_db_url, catalog=None):
     if catalog is None:
-        mc = MockCatalog(db_name='dcae_cli.test.db', purge_existing=True, enforce_image=False)
+        mc = MockCatalog(db_name='dcae_cli.test.db', purge_existing=True,
+                enforce_image=False, db_url=mock_db_url)
     else:
         mc = catalog
 

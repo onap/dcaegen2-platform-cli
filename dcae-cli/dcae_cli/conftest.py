@@ -56,3 +56,13 @@ def mock_cli_config(monkeypatch):
     monkeypatch.setattr(dcae_cli.util.config, "get_config", fake_get_config)
     monkeypatch.setattr(dcae_cli.util.profiles, "get_profiles", fake_get_profiles)
 
+
+@pytest.fixture
+def mock_db_url(tmpdir):
+    """Fixture to provide mock db url
+
+    This url is intended to be the location of where to place the local sqlite
+    databases for each unit test"""
+    dbname="dcae_cli.test.db"
+    config_dir = tmpdir.mkdir("config")
+    return "/".join(["sqlite://", str(config_dir), dbname])

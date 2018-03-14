@@ -40,9 +40,9 @@ def _get_spec(path):
         return json.load(file)
 
 
-def test_basic(mock_cli_config):
-
-    obj = {'catalog': MockCatalog(purge_existing=True, db_name='dcae_cli.test.db', enforce_image=False),
+def test_basic(mock_cli_config, mock_db_url, tmpdir):
+    obj = {'catalog': MockCatalog(purge_existing=True, db_name='dcae_cli.test.db', 
+        enforce_image=False, db_url=mock_db_url),
            'config': {'user': 'test-user'}}
 
     runner = CliRunner()

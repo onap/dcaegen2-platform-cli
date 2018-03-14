@@ -34,12 +34,12 @@ from dcae_cli.util import profiles
 from dcae_cli.util import config
 
 
-def test_basic(monkeypatch, tmpdir):
+def test_basic(monkeypatch, tmpdir, mock_db_url):
 
     runner = CliRunner()
 
     # Setup config
-    test_db_url = "sqlite:///{0}/dcae_cli.db".format(util.get_app_dir())
+    test_db_url = mock_db_url
     config_dict = { "user": "ninny", "active_profile": "fake-solutioning",
             "db_url": test_db_url, "cli_version": "2.0.0" }
     config_file = tmpdir.join("config.json")
