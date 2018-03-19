@@ -433,6 +433,15 @@ def test_apply_inputs():
     assert updated_config == {"foo": "baz"}
 
 
+def test_choose_consul_host(monkeypatch):
+    def fake_default_consul_host():
+        return "default-consul-host"
+
+    monkeypatch.setattr(dis, "default_consul_host", fake_default_consul_host)
+    assert "default-consul-host" == dis._choose_consul_host(None)
+    assert "provided-consul-host" == dis._choose_consul_host("provided-consul-host")
+
+
 if __name__ == '__main__':
     '''Test area'''
     pytest.main([__file__, ])
