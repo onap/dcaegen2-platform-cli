@@ -69,6 +69,14 @@ def default_consul_host():
     return get_profile().consul_host
 
 
+def _choose_consul_host(consul_host):
+    """Chooses the appropriate consul host
+
+    Chooses between a provided value and a default
+    """
+    return default_consul_host() if consul_host == None else consul_host
+
+
 def replace_dots(comp_name, reverse=False):
     '''Converts dots to dashes to prevent downstream users of Consul from exploding'''
     if not reverse:
@@ -237,7 +245,7 @@ def get_user_instances(user, consul_host=None, filter_instances_func=is_healthy)
     --------
     Dict whose keys are component (name,version) tuples and values are list of component instance names
     '''
-    consul_host = consul_host if consul_host == None else default_consul_host()
+    consul_host = _choose_consul_host(consul_host)
     filter_func = partial(filter_instances_func, consul_host)
     instances = list(filter(filter_func, _get_instances(consul_host, user)))
 
@@ -278,7 +286,7 @@ def get_healthy_instances(user, cname, cver, consul_host=None):
     -------
     List of strings where the strings are fully qualified instance names
     """
-    consul_host = consul_host if consul_host == None else default_consul_host()
+    consul_host = _choose_consul_host(consul_host)
     return _get_component_instances(is_healthy, user, cname, cver, consul_host)
 
 def get_defective_instances(user, cname, cver, consul_host=None):
@@ -294,7 +302,7 @@ def get_defective_instances(user, cname, cver, consul_host=None):
     def is_not_healthy(consul_host, component):
         return not is_healthy(consul_host, component)
 
-    consul_host = consul_host if consul_host == None else default_consul_host()
+    consul_host = _choose_consul_host(consul_host)
     return _get_component_instances(is_not_healthy, user, cname, cver, consul_host)
 
 
@@ -336,7 +344,7 @@ def _create_dmaap_key(config_key):
 
 def clear_user_instances(user, host=None):
     '''Removes all Consul key:value entries for a given user'''
-    host = host if host == None else default_consul_host()
+    host = _choose_consul_host(host)
     cons = Consul(host)
     cons.kv.delete(user, recurse=True)
 
@@ -486,7 +494,7 @@ def get_docker_logins(host=None):
         {"registry": .., "username":.., "password":.. }
     """
     key = get_docker_logins_key()
-    host = host if host == None else default_consul_host()
+    host = _choose_consul_host(host)
     (index, val) = Consul(host).kv.get(key)
 
     if val:
@@ -497,7 +505,7 @@ def get_docker_logins(host=None):
 
 def push_config(conf_key, conf, rels_key, rels, dmaap_key, dmaap_map, host=None):
     '''Uploads the config and rels to Consul'''
-    host = host if host == None else default_consul_host()
+    host = _choose_consul_host(host)
     cons = Consul(host)
     for k, v in ((conf_key, conf), (rels_key, rels), (dmaap_key, dmaap_map)):
         cons.kv.put(k, json.dumps(v))
@@ -510,7 +518,7 @@ def remove_config(config_key, host=None):
     -------
     True when all artifacts have been successfully deleted else False
     """
-    host = host if host == None else default_consul_host()
+    host = _choose_consul_host(host)
     cons = Consul(host)
     results = [ cons.kv.delete(k) for k in (config_key, _create_rels_key(config_key), \
             _create_dmaap_key(config_key)) ]
@@ -558,7 +566,7 @@ def config_context(user, cname, cver, params, interface_map, instance_map,
         Config will continue to be created even if there are no downstream compatible
         component when this flag is set to True. Default is False.
     '''
-    host = host if host == None else default_consul_host()
+    host = _choose_consul_host(host)
 
     try:
         conf_key, conf, rels_key, rels, dmaap_key, dmaap_map = create_config(
