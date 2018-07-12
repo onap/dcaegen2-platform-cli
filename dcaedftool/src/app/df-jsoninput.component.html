@@ -1,0 +1,94 @@
+<!--
+ org.onap.dcae
+ ============LICENSE_START====================================================
+ Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ =============================================================================
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ ============LICENSE_END======================================================
+
+ ECOMP is a trademark and service mark of AT&T Intellectual Property.
+-->
+<md-toolbar class="scenario-toolbar">
+  <div fxLayout="row" fxFill>
+    <div fxLayout="row" fxFlex fxFill >
+      <div class="one" fxFlex="15"   fxHide="true" fxLayoutAlign="center center">
+        <md-select class="schema-version" placeholder="MetaSchema Version"  >
+          <md-option class="schema-version" >
+            1.0.0
+          </md-option>
+          <br>
+        </md-select>
+      </div>
+      <div  fxFlex="15" fxLayoutAlign="center center">
+        <button md-raised-button class="meta-display-button" (click)=toggleMetaSchema()  >
+          {{metaButton}}
+        </button>
+      </div>
+      <div  fxFlex="75"    fxLayoutAlign="center center">
+         <h1 class="scenario-title" text-align:center > Verify JSON Schema and Test Input</h1>
+      </div>
+    </div>
+  </div>
+
+</md-toolbar>
+
+<div fxLayout="row" fxFill flexLayoutGap=10px>
+  <div fxLayout="row" fxFlex fxFill  flexLayoutGap=10px>
+    <div class="metaschema" fxFlex="100" fxFill  fxShow={{metaDisplay}} flex="grow" fxLayoutAlign="center center">
+      <md-card class="metaschema-card">
+        <md-card-title class="metaschema-title">
+          Data Format MetaSchema
+        </md-card-title>
+        <md-card-content class="metaschema-text">
+          {{dfmetaschema}}
+        </md-card-content>
+      </md-card>
+    </div>
+    <div class="schema-container"  fxLayout="column" fxFlex="100" fxFill flex="grow"  fxLayoutAlign="center center">
+      <md-card class="schema-input-title" fxFlex="100" fxFill flex="grow"  fxLayoutAlign="center center">
+        <md-card-title class="schemainput-title"  fxFlex="100" fxFill flex="grow"   fxLayoutAlign="left left">
+          Application Schema
+        </md-card-title>
+      </md-card>
+        <textarea mdInput class="schema-input-textarea" placeholder="Enter your Application Schema Definition Here" [ngModel]="dfschema" (keyup)="doDFSchemaChange($event)" fxLayoutAlign="center center" autofocus="">
+        </textarea>
+        <md-card class="schema-msgs"   fxLayout="column" fxFlex="100" fxFill flex="grow"   fxLayoutAlign="left left" >
+          <h4>Schema Verification Messages</h4>
+          <span style="color:black">{{schemaMsg}}</span>
+          <ul class="schema-error"  *ngFor="let msg of schemaErrMsgs">
+            <li class="schema-error" >
+              {{msg}}
+            </li>
+          </ul>
+        </md-card>
+    </div>
+    <div class="json-container"  fxLayout="column" fxFlex="100" fxFill flex="grow"  fxLayoutAlign="center center">
+      <md-card class="json-input-title" fxFlex="100" fxFill flex="grow"  fxLayoutAlign="center center">
+        <md-card-title class="jsoninput-title"  fxFlex="100" fxFill flex="grow"   fxLayoutAlign="left left">
+          JSON Input
+        </md-card-title>
+      </md-card>
+        <textarea mdInput class="json-input-textarea" placeholder="Enter JSON Input Here" [ngModel]="dfjson" (keyup)="doDFJSONChange($event)" fxLayoutAlign="center center" autofocus="">
+        </textarea>
+        <md-card class="json-msgs"   fxLayout="column" fxFlex="100" fxFill flex="grow"   fxLayoutAlign="left left">
+          <h4>JSON Input Messages</h4>
+          <span style="color:black">{{jsonMsg}}</span>
+          <ul class="json-error"  *ngFor="let msg of jsonErrMsgs">
+           <li class="json-error" >
+             {{msg}}
+           </li>
+         </ul>
+        </md-card>
+    </div>
+  </div>
+</div>

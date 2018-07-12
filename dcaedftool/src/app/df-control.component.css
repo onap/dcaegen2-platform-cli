@@ -1,0 +1,85 @@
+/*
+ org.onap.dcae
+ ============LICENSE_START====================================================
+ Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+ =============================================================================
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ ============LICENSE_END======================================================
+
+ ECOMP is a trademark and service mark of AT&T Intellectual Property.
+*/
+md-sidenav-container {
+
+}
+
+md-card {
+  color: #3f51b5;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 150%;
+  text-align:center;
+  margin-left: 100px;
+  padding-left: 10px;
+  background-color: #f2f2f2;
+}
+.app-title {
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 150%;
+  background-color: #3f51b5;
+}
+.app-menu-button {
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 150%;
+  background-color: #3f51b5;
+}
+.schema-version {
+  color: #3f51b5;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 50%;
+  background-color: #f2f2f2;
+}
+.nav-title {
+  color: #3f51b5;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 150%;
+  padding-left: 16px;
+  margin-left: 100px;
+  background-color: #f2f2f2;
+}
+.active-nav {
+  color: #3f51b5;
+    min-width: 520px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 100%;
+  padding-left: 16px;
+  min-width: 520px;
+  background-color: #f2f2f2;
+}
+.nav-button {
+  min-width: 520px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 100%;
+  padding-left: 16px;
+  background-color: #f2f2f2;
+}
+
+md-sidenav {
+  background-color: #f2f2f2;
+  padding: 10px;
+  min-width: 100px;
+}
+md-toolbar {
+  padding: 6px;
+
+}
