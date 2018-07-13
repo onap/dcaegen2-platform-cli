@@ -1,0 +1,114 @@
+{
+  "self": {
+    "version": "0.5.0",
+    "name": "sandbox.platform.laika",
+    "description": "Web service used as a stand-alone test DCAE service component",
+    "component_type": "docker"
+  },
+  "streams": {
+    "subscribes": [],
+    "publishes": [
+      {
+        "format": "some.format",
+        "version": "1.0.0",
+        "config_key": "pub-foo",
+        "type": "message router"
+      },
+      {
+        "format": "some.format",
+        "version": "1.0.0",
+        "config_key": "pub-foo",
+        "type": "http"
+      }
+    ]
+  },
+  "services": {
+    "calls": [],
+    "provides": [
+      {
+        "route": "/rollcall",
+        "verb": "GET",
+        "request": {
+          "format": "sandbox.platform.any",
+          "version": "0.1.0"
+        },
+        "response": {
+          "format": "sandbox.platform.laika.rollcall.response",
+          "version": "0.1.0"
+        }
+      },
+      {
+        "route": "/identity",
+        "verb": "POST",
+        "request": {
+          "format": "sandbox.platform.laika.identity.request",
+          "version": "0.1.0"
+        },
+        "response": {
+          "format": "sandbox.platform.laika.identity.response",
+          "version": "0.1.0"
+        }
+      },
+      {
+        "route": "/health",
+        "verb": "GET",
+        "request": {
+          "format": "sandbox.platform.any",
+          "version": "0.1.0"
+        },
+        "response": {
+          "format": "sandbox.platform.laika.health",
+          "version": "0.1.0"
+        }
+      }
+    ]
+  },
+  "parameters": [
+    {
+      "name": "threshold",
+      "description": "Some fake threshold",
+      "type": "number",
+      "value": 2000
+    },
+    {
+      "name": "some-target-number",
+      "description": "Some fake target",
+      "type": "number",
+      "value": 10000,
+      "constraints": [
+          {
+            "greater_or_equal": 1
+          },
+          {
+            "less_than": 100000
+          }]
+    },
+    {
+      "name": "magic-word",
+      "description": "Some magic word",
+      "type": "string",
+      "value": "requirements",
+      "constraints": [
+          {
+            "valid_values": ["rally", "user story"]
+          }]
+    }
+  ],
+  "auxilary": {
+    "healthcheck": {
+      "type": "http",
+      "endpoint": "/foo"
+    },
+    "ports": ["8080:8080"],
+    "logging": {
+      "log_directory": "/tmp/yo",
+      "alternate_fb_path": "/tmp/path"
+    }
+  },
+  "artifacts": [
+    {
+      "uri": "some docker image path",
+      "type": "docker image"
+    }
+  ]
+}
