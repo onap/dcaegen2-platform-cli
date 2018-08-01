@@ -1,7 +1,7 @@
 # ============LICENSE_START=======================================================
 # org.onap.dcae
 # ================================================================================
-# Copyright (c) 2017 AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2017-2018 AT&T Intellectual Property. All rights reserved.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -83,21 +83,10 @@ def get_docker_client(profile, logins=[]):
     except:
         raise DockerError('Could not connect to the Docker daemon. Is it running?')
 
-def _get_docker_client(client_funcs=(docker.Client, docker.from_env)):
-    '''Returns a docker client object'''
-    for func in client_funcs:
-        try:
-            client = func(version='auto')
-            client.ping()
-            return client
-        except:
-            continue
-    raise DockerError('Could not connect to the Docker daemon. Is it running?')
-
 
 def image_exists(image):
     '''Returns True if the image exists locally'''
-    client = _get_docker_client()
+    client = docker.from_env(version="auto")
     return True if client.images(image) else False
 
 

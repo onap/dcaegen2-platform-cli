@@ -1,7 +1,7 @@
 # ============LICENSE_START=======================================================
 # org.onap.dcae
 # ================================================================================
-# Copyright (c) 2017 AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2017-2018 AT&T Intellectual Property. All rights reserved.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ setup(
     dcae_cli=dcae_cli.cli:cli
     """,
     setup_requires=['pytest-runner'],
-    install_requires=['python-consul',
+    install_requires=['python-consul<1.0.0',
                       'six',
                       'sqlalchemy',
                       'SQLAlchemy-Utils',
@@ -50,6 +50,7 @@ setup(
                       'jsonschema',
                       'terminaltables',
                       'psycopg2',
+                      'psycopg2-binary',
                       'genson',
                       'onap-dcae-discovery-client>=2.0.0',
                       'onap-dcae-dockering>=1.0.0,<2.0.0'

@@ -1,0 +1,72 @@
+# ============LICENSE_START=======================================================
+# org.onap.dcae
+# ================================================================================
+# Copyright (c) 2018 AT&T Intellectual Property. All rights reserved.
+# ================================================================================
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ============LICENSE_END=========================================================
+#
+# ECOMP is a trademark and service mark of AT&T Intellectual Property.
+
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  # use official ubuntu image for virtualbox
+  config.vm.provider "virtualbox" do |vb, override|
+    override.vm.box = "ubuntu/xenial64"
+    override.vm.synced_folder ".", "/srv/dcae-onboarding"
+    vb.customize ["modifyvm", :id, "--memory", "1024"]
+    vb.customize ["modifyvm", :id, "--cpus", "2"]
+  end
+
+  # use third party image and NFS sharing for lxc
+  config.vm.provider "lxc" do |_, override|
+    override.vm.box = "generic/ubuntu1604"
+    override.vm.synced_folder ".", "/srv/dcae-onboarding", :type => "nfs"
+  end
+
+  # use third party image and NFS sharing for libvirt
+  config.vm.provider "libvirt" do |_, override|
+    override.vm.box = "generic/ubuntu1604"
+    override.vm.synced_folder ".", "/srv/dcae-onboarding", :type => "nfs"
+  end
+
+  # configure shared package cache if possible
+  if Vagrant.has_plugin?("vagrant-cachier")
+    config.cache.enable :apt
+    config.cache.scope = :box
+  end
+
+  # port forward for webrick on 3000
+  # Access to docker engine
+  config.vm.network :forwarded_port, :guest => 2376, :host => 2376
+  # Access to consul
+  config.vm.network :forwarded_port, :guest => 8500, :host => 8500
+  # Access to config binding
+  config.vm.network :forwarded_port, :guest => 10000, :host => 10000
+  # Access to onboarding db
+  config.vm.network :forwarded_port, :guest => 5432, :host => 5432
+  # Access to local docker registry
+  config.vm.network :forwarded_port, :guest => 8443, :host => 8443
+
+  # Access to ephemeral ports which docker engine uses when using the
+  # -P option when doing "docker run".  The range comes from 
+  # /proc/sys/net/ipv4/ip_local_port_range and its a small slice of the range.
+  (32768..32775).each do |ephemeral_port|
+    config.vm.network :forwarded_port, :guest => ephemeral_port, :host => ephemeral_port
+  end
+
+  # provision using a simple shell script
+  config.vm.provision :shell, :path => "provision.sh"
+end

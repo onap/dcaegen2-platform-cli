@@ -1,0 +1,11 @@
+{
+    "client_addr" : "0.0.0.0",
+    "bootstrap_expect" : 1,
+    "datacenter": "vagrant-dcae",
+    "http_api_response_headers": {
+        "Access-Control-Allow-Origin" : "*"
+    },
+    "server": true,
+    "ui": true,
+    "log_level": "info"
+}

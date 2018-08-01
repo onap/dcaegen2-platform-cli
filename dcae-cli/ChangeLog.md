@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.10.2]
+
+* Fix dependency conflict with python-consul
+* Fix psycopg2 warning by requiring psycopg2-binary
+* Use Docker client from env when checking images
+
 ## [2.10.1]
 
 * Fix DCAEGEN2-402
