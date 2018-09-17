@@ -28,6 +28,7 @@ import contextlib
 from collections import defaultdict
 from itertools import chain
 from functools import partial
+from datetime import datetime
 from uuid import uuid4
 
 import six
@@ -39,6 +40,8 @@ from dcae_cli.util.exc import DcaeException
 from dcae_cli.util.profiles import get_profile
 from dcae_cli.util.config import get_docker_logins_key
 
+import os
+import click
 
 logger = get_logger('Discovery')
 
@@ -342,6 +345,12 @@ def _create_dmaap_key(config_key):
     return "{:}:dmaap".format(config_key)
 
 
+def _create_policies_key(config_key):
+    """Create policies key from config key
+
+    Assumes config_key is well-formed"""
+    return "{:}:policies/".format(config_key)
+
 def clear_user_instances(user, host=None):
     '''Removes all Consul key:value entries for a given user'''
     host = _choose_consul_host(host)
@@ -510,6 +519,11 @@ def push_config(conf_key, conf, rels_key, rels, dmaap_key, dmaap_map, host=None)
     for k, v in ((conf_key, conf), (rels_key, rels), (dmaap_key, dmaap_map)):
         cons.kv.put(k, json.dumps(v))
 
+    logger.info("* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *")
+    logger.info("* If you run a 'component reconfig' command, you must first execute the following")
+    logger.info("* export SERVICE_NAME={:}".format(conf_key))
+    logger.info("* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *")
+
 
 def remove_config(config_key, host=None):
     """Deletes a config from Consul
@@ -520,9 +534,10 @@ def remove_config(config_key, host=None):
     """
     host = _choose_consul_host(host)
     cons = Consul(host)
-    results = [ cons.kv.delete(k) for k in (config_key, _create_rels_key(config_key), \
-            _create_dmaap_key(config_key)) ]
-    return all(results)
+    #  "recurse=True" deletes the SERVICE_NAME KV and all other KVs with suffixes (:rel, :dmaap, :policies)
+    results = cons.kv.delete(config_key, recurse=True)
+
+    return results
 
 
 def _group_config(config, config_key_map):
@@ -559,7 +574,8 @@ def config_context(user, cname, cver, params, interface_map, instance_map,
 
     Args
     ----
-    always_cleanup: (boolean) This context manager will cleanup the produced config
+    always_cleanup: (boolean)
+        This context manager will cleanup the produced config
         context always if this is True. When False, cleanup will only occur upon any
         exception getting thrown in the context manager block. Default is True.
     force: (boolean)
@@ -596,3 +612,166 @@ def config_context(user, cname, cver, params, interface_map, instance_map,
                 pass
             else:
                 remove_config(conf_key, host)
+
+
+def policy_update(policy_change_file):
+
+    #  Determine if it is an 'updated_policies' or 'removed_policies' change, or if user included ALL policies
+    policies = True if "policies"         in policy_change_file.keys() else False
+    updated  = True if "updated_policies" in policy_change_file.keys() else False
+    removed  = True if "removed_policies" in policy_change_file.keys() else False
+
+    cons          = Consul(consul_host)
+    service_name  = os.environ["SERVICE_NAME"]
+    policy_folder = service_name + ":policies/items/"
+    event_folder  = service_name + ":policies/event"
+
+    if policies:
+        #  User specified ALL "policies" in the Policy File.  Ignore "updated_policies"/"removed_policies"
+        logger.warning("The 'policies' specified in the 'policy-file' will replace all policies in Consul.")
+        allPolicies = policy_change_file['policies']
+        if not update_all_policies(cons, policy_folder, allPolicies):
+            return False
+
+    else:
+        #  If 'removed_policies', delete the Policy from the Component KV pair
+        if removed:
+            policyDeletes = policy_change_file['removed_policies']
+            if not remove_policies(cons, policy_folder, policyDeletes):
+                return False
+
+        #  If 'updated_policies', update the Component KV pair
+        if updated:
+            policyUpdates = policy_change_file['updated_policies']
+            if not update_specified_policies(cons, policy_folder, policyUpdates):
+                return False
+
+    return create_policy_event(cons, event_folder, policy_folder)
+
+
+def create_policy_event(cons, event_folder, policy_folder):
+    """ Create a Policy 'event' KV pair in Consol """
+
+    timestamp      = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+    update_id      = str(uuid4())
+    policies       = cons.kv.get(policy_folder, recurse=True)
+    policies_count = str(policies).count("'Key':")
+
+    event = '{"action": "gathered", "timestamp": "' + timestamp + '", "update_id": "' + update_id + '", "policies_count": ' + str(policies_count) + '}'
+    if not cons.kv.put(event_folder, event):
+        logger.error("Policy 'Event' creation of ({:}) in Consul failed".format(event_folder))
+        return False
+
+    return True
+
+
+def update_all_policies(cons, policy_folder, allPolicies):
+    """ Delete all policies from Consul, then add the policies the user specified in the 'policies' section of the policy-file """
+
+    if not cons.kv.delete(policy_folder, recurse=True):    #  Deletes all Policies under the /policies/items folder
+        logger.error("Policy delete of ({:}) in Consul failed".format(policy_folder))
+        return False
+
+    if not update_specified_policies(cons, policy_folder, allPolicies):
+        return False
+
+    return True
+
+def update_specified_policies(cons, policy_folder, policyUpdates):
+    """ Replace the policies the user specified in the 'updated_policies' (or 'policies') section of the policy-file """
+
+    for policy in policyUpdates:
+        policy_folder_id = extract_policy_id(policy_folder, policy)
+        if policy_folder_id:
+            policyBody = json.dumps(policy)
+            if not cons.kv.put(policy_folder_id, policyBody):
+                logger.error("Policy update of ({:}) in Consul failed".format(policy_folder_id))
+                return False
+        else:
+            return False
+
+    return True
+
+
+def remove_policies(cons, policy_folder, policyDeletes):
+    """ Delete the policies that the user specified in the 'removed_policies' section of the policy-file """
+
+    for policy in policyDeletes:
+        policy_folder_id = extract_policy_id(policy_folder, policy)
+        if policy_folder_id:
+            if not cons.kv.delete(policy_folder_id):
+                logger.error("Policy delete of ({:}) in Consul failed".format(policy_folder_id))
+                return False
+        else:
+            return False
+
+    return True
+
+def extract_policy_id(policy_folder, policy):
+    """ Extract the Policy ID from the policyName.
+        Return the Consul key (Policy Folder with Policy ID) """
+
+    policyId_re = re.compile(r"(.*)\.\d+\.[a-zA-Z]+$")
+
+    policyName = policy['policyName']  #  Extract the policy Id "Consul Key" from the policy name
+    match      = policyId_re.match(policyName)
+
+    if match:
+        policy_id        = match.group(1)
+        policy_folder_id = policy_folder + policy_id
+
+        return policy_folder_id
+    else:
+        logger.error("policyName ({:}) needs to end in '.#.xml' in order to extract the Policy ID".format(policyName))
+        return
+
+
+def build_policy_command(policy_reconfig_path, policy_change_file):
+        """ Build command to execute the Policy Reconfig script in the Docker container """
+
+        #  Determine if it is an 'updated_policies' and/or 'removed_policies' change, or if user included ALL policies
+        all_policies = True if "policies"         in policy_change_file.keys() else False
+        updated      = True if "updated_policies" in policy_change_file.keys() else False
+        removed      = True if "removed_policies" in policy_change_file.keys() else False
+
+        #  Create the Reconfig Script command (3 parts: Command and 2 ARGs)
+        command = []
+        command.append(policy_reconfig_path)
+        command.append("policies")
+
+        #  Create a Dictionary of 'updated', 'removed', and 'ALL' policies
+
+        #  'updated' policies - policies come from the --policy-file
+        if updated:
+            updated_policies = policy_change_file['updated_policies']
+        else: updated_policies = []
+
+        policies = {}
+        policies["updated_policies"] = updated_policies
+
+        #  'removed' policies - policies come from the --policy-file
+        if removed:
+            removed_policies = policy_change_file['removed_policies']
+        else: removed_policies = []
+
+        policies["removed_policies"] = removed_policies
+
+        #  ALL 'policies' - policies come from Consul
+        cons          = Consul(consul_host)
+        service_name  = os.environ["SERVICE_NAME"]
+        policy_folder = service_name + ":policies/items/"
+
+        id, consul_policies = cons.kv.get(policy_folder, recurse=True)
+
+        policy_values = []
+        if consul_policies:
+            for policy in consul_policies:
+                policy_value = json.loads(policy['Value'])
+                policy_values.append(policy_value)
+
+        policies["policies"] = policy_values
+
+        #  Add the policies to the Docker "command" as a JSON string
+        command.append(json.dumps(policies))
+
+        return command

@@ -1,7 +1,7 @@
 # ============LICENSE_START=======================================================
 # org.onap.dcae
 # ================================================================================
-# Copyright (c) 2017 AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2017-2018 AT&T Intellectual Property. All rights reserved.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -32,10 +32,11 @@ def catalog():
 
 
 @catalog.command(name="list")
-@click.option("--expanded", is_flag=True, default=False, help="Display the expanded view - show all versions and all status")
+@click.option("--expanded", is_flag=True, default=False, help="Display the expanded view - show all versions and all statuses")
 #TODO: @click.argument('query')
 @click.pass_obj
 def action_list(obj, expanded):
+    """Lists resources in the onboarding catalog"""
     # Query both components and data formats. Display both sets.
 
     user, catalog = obj['config']['user'], obj['catalog']
@@ -82,6 +83,7 @@ def action_list(obj, expanded):
 @click.argument("resource", metavar="name:version")
 @click.pass_obj
 def action_show(obj, resource):
+    """Provides more information about a resource"""
     # Query both components and data formats. Display both sets.
     name, ver = util.parse_input(resource)
     catalog = obj['catalog']

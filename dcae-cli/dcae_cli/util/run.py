@@ -130,8 +130,8 @@ def run_component(user, cname, cver, catalog, additional_user, attached, force,
     Args
     ----
     force: (boolean)
-        Continue to run even when there are no valid downstream components when
-        this flag is set to True.
+        Continue to run even when there are no valid downstream components,
+        when this flag is set to True.
     dmaap_map: (dict) config_key to message router or data router connections.
         Used as a manual way to make available this information for the component.
     inputs_map: (dict) config_key to value that is intended to be provided at

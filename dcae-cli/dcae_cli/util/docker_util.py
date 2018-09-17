@@ -32,7 +32,6 @@ import dockering as doc
 from dcae_cli.util.logger import get_logger
 from dcae_cli.util.exc import DcaeException
 
-
 dlog = get_logger('Docker')
 
 _reg_img = 'gliderlabs/registrator:latest'
@@ -188,6 +187,7 @@ def deploy_component(profile, image, instance_name, docker_config, should_wait=F
     client = get_docker_client(profile, logins=logins)
 
     config = doc.create_container_config(client, image, envs, hcp)
+
     return _run_container(client, config, name=instance_name, wait=should_wait)
 
 
@@ -210,3 +210,17 @@ def undeploy_component(client, image, instance_name):
     except Exception as e:
         dlog.error("Error while undeploying Docker container/image: {0}".format(e))
         return False
+
+def reconfigure(client, instance_name, command):
+    """  Execute the Reconfig script in the Docker container  """
+
+    #  'command' has 3 parts in a list (1 Command and 2 ARGs)
+    exec_Id = client.exec_create(container=instance_name, cmd=command)
+
+    exec_start_resp = client.exec_start(exec_Id, stream=True)
+
+    #  Using a 'single' generator response to solve issue of 'start_exec' returning control after 6 minutes
+    for response in exec_start_resp:
+        dlog.info("Reconfig Script execution response: {:}".format(response))
+        exec_start_resp.close()
+        break

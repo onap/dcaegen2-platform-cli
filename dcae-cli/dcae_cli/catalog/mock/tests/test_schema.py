@@ -110,7 +110,10 @@ component_test = r'''
     {
       "name": "threshold",
       "value": 0.75,
-      "description": "Probability threshold to exceed to be anomalous"
+      "description": "Probability threshold to exceed to be anomalous",
+      "designer_editable": false,
+      "sourced_at_deployment": false,
+      "policy_editable": false
     }
   ],
   "artifacts": [

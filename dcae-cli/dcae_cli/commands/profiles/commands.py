@@ -1,7 +1,7 @@
 # ============LICENSE_START=======================================================
 # org.onap.dcae
 # ================================================================================
-# Copyright (c) 2017 AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2017-2018 AT&T Intellectual Property. All rights reserved.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ def profiles():
 @profiles.command()
 @click.argument('name')
 def activate(name):
-    '''Sets profile NAME as the active profile'''
+    '''Sets profile (name) as the active profile'''
     activate_profile(name)
 
 
@@ -56,7 +56,7 @@ def list_profiles():
 @profiles.command()
 @click.argument('name')
 def show(name):
-    '''Prints the profile dictionary'''
+    '''Provides more information about a Profile'''
     profiles = get_profiles()
     try:
         click.echo(json.dumps(profiles[name], sort_keys=True, indent=4))
@@ -67,7 +67,7 @@ def show(name):
 @profiles.command()
 @click.argument('name', type=click.STRING)
 def create(name):
-    '''Creates a new profile NAME initialized with defaults'''
+    '''Creates new profile (name), with defaults'''
     create_profile(name)
 
 
@@ -76,12 +76,12 @@ def create(name):
 @click.argument('key')
 @click.argument('value')
 def update(name, key, value):
-    '''Updates profile NAME such that KEY=VALUE'''
+    '''Updates profile (name) for specific Key/Value'''
     update_profile(name, **{key: value})
 
 
 @profiles.command()
 @click.argument('name')
 def delete(name):
-    '''Deletes profile NAME'''
+    '''Deletes profile (name)'''
     delete_profile(name)

@@ -58,10 +58,16 @@ _c1_spec = {'self': {'name': 'std.comp_one',
                                      'route': '/prov1'}]},
           'parameters': [{"name": "foo",
                           "value": 1,
-                          "description": "the foo thing"},
+                          "description": "the foo thing",
+                          "designer_editable": False,
+                          "sourced_at_deployment": False,
+                          "policy_editable": False},
                          {"name": "bar",
                           "value": 2,
-                          "description": "the bar thing"}
+                          "description": "the bar thing",
+                          "designer_editable": False,
+                          "sourced_at_deployment": False,
+                          "policy_editable": False}
                           ],
           'artifacts': [{ "uri": "foo-image", "type": "docker image" }],
           'auxilary': {

@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.11.0]
+
+* Add Policy Configuration Support.
+* Update and improve the Help Text that is displayed to the user.
+* Component Spec schema additions for parameters section (policy, volumes).
+* Component Spec schema updates to make the following required: (designer_editable, sourced_at_deployment, policy_editable).
+
 ## [2.10.2]
 
 * Fix dependency conflict with python-consul
@@ -126,4 +133,4 @@ EDIT: This one addressed the issue in the catalog
 
 ## [0.11.0]
 
-* Make CDAP Paramaters follow parameters definitions 
+* Make CDAP Paramaters follow parameters definitions

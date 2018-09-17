@@ -46,7 +46,7 @@ setup(
                       'six',
                       'sqlalchemy',
                       'SQLAlchemy-Utils',
-                      'click',
+                      'click>=6.0,<7.0',
                       'jsonschema',
                       'terminaltables',
                       'psycopg2',

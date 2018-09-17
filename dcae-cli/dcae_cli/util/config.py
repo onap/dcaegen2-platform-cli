@@ -124,7 +124,7 @@ def get_docker_logins_key():
 
 def get_path_component_spec():
     return get_config().get("path_component_spec",
-            "/component-json-schemas/component-specification/dcae-cli-v1/component-spec-schema.json")
+            "/component-json-schemas/component-specification/dcae-cli-v2/component-spec-schema.json")
 
 def get_path_data_format():
     return get_config().get("path_data_format",

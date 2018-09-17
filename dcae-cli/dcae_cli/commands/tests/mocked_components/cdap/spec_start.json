@@ -35,14 +35,28 @@
        "app_config" : [
                          {"name" : "some_param",
                          "description" : "some desc",
-                         "value" : "some_value"}
+                         "value" : "some_value",
+                         "designer_editable" : false,
+                         "sourced_at_deployment" : false,
+                         "policy_editable" : false}
                       ],
        "app_preferences" : [
                              {"name" : "some_param2",
                               "description" : "some desc2",
-                              "value" : "some_value2"}
+                              "value" : "some_value2",
+                              "designer_editable" : false,
+                              "sourced_at_deployment" : false,
+                              "policy_editable" : false}
                            ],
-       "program_preferences" : [{"program_type" : "flows", "program_id" : "WhoFlow", "program_pref" : [{"name" : "some_param3","description" : "some desc3", "value" : "some_value3"}]}]
+       "program_preferences" : [{"program_type" : "flows",
+                                 "program_id" : "WhoFlow",
+                                 "program_pref" : [{"name" : "some_param3",
+                                                    "description" : "some desc3",
+						    "value" : "some_value3",
+                                                    "designer_editable" : false,
+                                                    "sourced_at_deployment" : false,
+                                                    "policy_editable" : false}
+                                                    ]}]
    },
    "auxilary": {
     "streamname":"who",
