@@ -1,7 +1,7 @@
 # ============LICENSE_START=======================================================
 # org.onap.dcae
 # ================================================================================
-# Copyright (c) 2017 AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2017-2018 AT&T Intellectual Property. All rights reserved.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -53,11 +53,11 @@ def data_format():
 
 
 @data_format.command()
-@click.option('--update', is_flag=True, help='Updates a locally added data format if it has not been already pushed')
+@click.option('--update', is_flag=True, help='Updates a locally added data format if it has not already been published')
 @click.argument('specification', type=click.Path(resolve_path=True, exists=True))
 @click.pass_obj
 def add(obj, update, specification):
-    '''Tracks a data format file SPECIFICATION locally but does not push to the catalog'''
+    '''Tracks a Format file Specification locally, but does not push to the catalog'''
     spec = load_json(specification)
     user, catalog = obj['config']['user'], obj['catalog']
     catalog.add_format(spec, user, update)
@@ -67,7 +67,7 @@ def add(obj, update, specification):
 @click.option('--latest', is_flag=True, help='Only list the latest version of data formats')
 @click.pass_obj
 def list_format(obj, latest):
-    """Lists all your data formats"""
+    """Lists all your Data Formats"""
     user, catalog = obj['config']['user'], obj['catalog']
     dfs = catalog.list_formats(latest, user=user)
 
@@ -87,7 +87,7 @@ def list_format(obj, latest):
 @click.argument('data-format', metavar="name:version")
 @click.pass_obj
 def show(obj, data_format):
-    '''Provides more information about FORMAT'''
+    '''Provides more information about a Data Format'''
     name, ver = parse_input(data_format)
     spec = obj['catalog'].get_format_spec(name, ver)
 
@@ -98,14 +98,14 @@ def show(obj, data_format):
 @click.argument('data-format')
 @click.pass_obj
 def publish(obj, data_format):
-    """Publishes data format to make publicly available"""
+    """Publish Format to make publicly available"""
     name, version = parse_input(data_format)
     user, catalog = obj['config']['user'], obj['catalog']
 
     if catalog.publish_format(user, name, version):
         click.echo("Data format has been published")
     else:
-        click.echo("Data format could not be published")
+        click.echo("ERROR: Data format could not be published")
 
 @data_format.command()
 @click.option('--keywords', is_flag=True, help='Adds a template of possible descriptive keywords', default=False)
@@ -115,7 +115,7 @@ def publish(obj, data_format):
 def generate(obj, name_version, file_or_dir_path, keywords):
     '''Create schema from a file or directory examples'''
     name, version = parse_input(name_version)
-    if version == None: 
+    if version == None:
       version = ""
     schema = genson.Schema()
     if os.path.isfile(file_or_dir_path):
@@ -149,16 +149,15 @@ def generate(obj, name_version, file_or_dir_path, keywords):
       raise DcaeException('Problem with JSON generation')
 
 def addfile(filename, schema):
-  try: 
+  try:
     fileadd = open(filename, "r")
   except IOError:
     raise DcaeException('Cannot open' + filename)
-  try: 
+  try:
     json_object = json.loads(fileadd.read())
     schema.add_object(json_object)
   except ValueError:
     raise DcaeException('Bad JSON file: ' + filename)
   finally:
     fileadd.close()
-
 

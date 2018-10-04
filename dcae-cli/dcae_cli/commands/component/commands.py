@@ -1,7 +1,7 @@
 # ============LICENSE_START=======================================================
 # org.onap.dcae
 # ================================================================================
-# Copyright (c) 2017 AT&T Intellectual Property. All rights reserved.
+# Copyright (c) 2017-2018 AT&T Intellectual Property. All rights reserved.
 # ================================================================================
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,15 +26,18 @@ import json
 from pprint import pformat
 
 import click
+import os
 
 from discovery_client import resolve_name
 
-from dcae_cli.util import profiles, load_json, dmaap, inputs
+from dcae_cli.util import profiles, load_json, dmaap, inputs, policy
 from dcae_cli.util.run import run_component, dev_component
 from dcae_cli.util import discovery as dis
+from dcae_cli.util import docker_util as du
 from dcae_cli.util.discovery import DiscoveryNoDownstreamComponentError
 from dcae_cli.util.undeploy import undeploy_component
 from dcae_cli.util.exc import DcaeException
+
 from dcae_cli.commands import util
 from dcae_cli.commands.util import parse_input, parse_input_pair, create_table
 
@@ -133,7 +136,7 @@ def list_component(obj, latest, subscribes, publishes, provides, calls, deployed
 @click.argument('component', metavar="name:version")
 @click.pass_obj
 def show(obj, component):
-    '''Provides more information about COMPONENT'''
+    '''Provides more information about a COMPONENT'''
     cname, cver = parse_input(component)
     catalog = obj['catalog']
     comp_spec = catalog.get_component_spec(cname, cver)
@@ -162,8 +165,9 @@ def _parse_dmaap_file(dmaap_file):
             dmaap.validate_dmaap_map_schema(dmaap_map)
             return dmaap.apply_defaults_dmaap_map(dmaap_map)
     except Exception as e:
-        message = "Problems with parsing the dmaap file. Check to make sure that it is a valid json and is in the expected structure."
+        message = "Problems with parsing the dmaap file. Check to make sure that it is a valid json and is in the expected format."
         raise DcaeException(message)
+
 
 _help_inputs_file = """
 Path to a file that contains a json that contains values to be used to bind to configuration parameters that have been marked as "sourced_at_deployment". The structure of the json is expected to be:
@@ -180,13 +184,35 @@ def _parse_inputs_file(inputs_file):
     try:
         with open(inputs_file, 'r+') as f:
             inputs_map = json.load(f)
-            # TODO: Validation of schema in the future? Skipping this because
-            # dti_payload is not being intended to be used.
+            # TODO: Validation of schema in the future?
             return inputs_map
     except Exception as e:
-        message = "Problems with parsing the inputs file. Check to make sure that it is a valid json and is in the expected structure."
+        message = "Problems with parsing the inputs file. Check to make sure that it is a valid json and is in the expected format."
         raise DcaeException(message)
 
+
+_help_policy_file = """
+Path to a file that contains a json of an (update/remove) Policy change.
+All "policies" can also be specified.
+The structure of the json is expected to be:
+
+{
+"updated_policies": [{"policyName": "value", "": ""},{"policyName": "value", "": ""}],
+"removed_policies": [{"policyName": "value", "": ""},{"policyName": "value", "": ""}],
+"policies": [{"policyName": "value", "": ""},{"policyName": "value", "": ""}]
+}
+"""
+
+def _parse_policy_file(policy_file):
+    try:
+        with open(policy_file, 'r+') as f:
+            policy_change_file = json.load(f)
+            policy.validate_against_policy_schema(policy_change_file)
+            return policy_change_file
+    except Exception as e:
+        click.echo(format(e))
+        message = "Problems with parsing the Policy file. Check to make sure that it is a valid json and is in the expected format."
+        raise DcaeException(message)
 
 @component.command()
 @click.option('--external-ip', '-ip', default=None, help='The external IP address of the Docker host. Only used for Docker components.')
@@ -201,7 +227,11 @@ def _parse_inputs_file(inputs_file):
 @click.pass_obj
 def run(obj, external_ip, additional_user, attached, force, dmaap_file, component,
         inputs_file):
-    '''Runs the latest version of COMPONENT. You may optionally specify version via COMPONENT:VERSION'''
+    '''Runs latest (or specific) COMPONENT version. You may optionally specify version via COMPONENT:VERSION'''
+
+    click.echo("Running the Component.....")
+    click.echo("")
+
     cname, cver = parse_input(component)
     user, catalog = obj['config']['user'], obj['catalog']
 
@@ -215,7 +245,8 @@ def run(obj, external_ip, additional_user, attached, force, dmaap_file, componen
         message = "Either run a compatible downstream component first or run with the --force flag to ignore this error"
         raise DcaeException(message)
     except inputs.InputsValidationError as e:
-        click.echo("There is a problem. {0}".format(e))
+        click.echo("ERROR: There is a problem. {0}".format(e))
+        click.echo("")
         message = "Component requires inputs. Please look at the use of --inputs-file and make sure the format is correct"
         raise DcaeException(message)
 
@@ -223,7 +254,7 @@ def run(obj, external_ip, additional_user, attached, force, dmaap_file, componen
 @click.argument('component')
 @click.pass_obj
 def undeploy(obj,  component):
-    '''Undeploys the latest version of COMPONENT. You may optionally specify version via COMPONENT:VERSION'''
+    '''Undeploy latest (or specific) COMPONENT version. You may optionally specify version via COMPONENT:VERSION'''
     cname, cver = parse_input(component)
     user, catalog = obj['config']['user'], obj['catalog']
     undeploy_component(user, cname, cver, catalog)
@@ -254,7 +285,8 @@ def dev(obj, specification, additional_user, force, dmaap_file, inputs_file):
             message = "Either run a compatible downstream component first or run with the --force flag to ignore this error"
             raise DcaeException(message)
         except inputs.InputsValidationError as e:
-            click.echo("There is a problem. {0}".format(e))
+            click.echo("ERROR: There is a problem. {0}".format(e))
+            click.echo("")
             message = "Component requires inputs. Please look at the use of --inputs-file and make sure the format is correct"
             raise DcaeException(message)
 
@@ -263,7 +295,7 @@ def dev(obj, specification, additional_user, force, dmaap_file, inputs_file):
 @click.argument('component')
 @click.pass_obj
 def publish(obj, component):
-    """Pushes COMPONENT to the public catalog"""
+    """Pushes a COMPONENT to the public catalog"""
     name, version = parse_input(component)
     user, catalog = obj['config']['user'], obj['catalog']
 
@@ -273,7 +305,7 @@ def publish(obj, component):
         unpub_formats = catalog.get_unpublished_formats(name, version)
 
         if unpub_formats:
-            click.echo("You must publish dependent data formats first:")
+            click.echo("ERROR: You must publish dependent data formats first:")
             click.echo("")
             click.echo("\n".join([":".join(uf) for uf in unpub_formats]))
             click.echo("")
@@ -284,15 +316,79 @@ def publish(obj, component):
     if catalog.publish_component(user, name, version):
         click.echo("Component has been published")
     else:
-        click.echo("Component could not be published")
+        click.echo("ERROR: Component could not be published")
 
 
 @component.command()
-@click.option('--update', is_flag=True, help='Updates a locally added component if it has not been already pushed')
+@click.option('--update', is_flag=True, help='Updates a locally added component if it has not already been published')
 @click.argument('specification', type=click.Path(resolve_path=True, exists=True))
 @click.pass_obj
 def add(obj, update, specification):
+    """Add Component to local onboarding catalog"""
     user, catalog = obj['config']['user'], obj['catalog']
 
     spec = load_json(specification)
     catalog.add_component(user, spec, update)
+
+
+@component.command()
+@click.option('--policy-file', type=click.Path(resolve_path=True, exists=True, dir_okay=False), help=_help_policy_file)
+@click.argument('component')
+@click.pass_obj
+def reconfig(obj, policy_file, component):
+    """Reconfigure COMPONENT for Policy change.
+        Modify Consul KV pairs for ('updated_policies', 'removed_policies', and 'policies') for Policy change event,
+        Execute the reconfig script(s) in the Docker container"""
+
+    click.echo("Running Component Reconfiguration.....")
+    click.echo("")
+
+    #  Read and Validate the policy-file
+    policy_change_file = _parse_policy_file(policy_file) if policy_file else {}
+
+    if not (policy_change_file):
+        click.echo("ERROR: For component 'reconfig', you must specify a --policy-file")
+        click.echo("")
+        return
+    else:
+        #  The Component Spec contains the Policy 'Reconfig Script Path/ScriptName'
+        cname, cver = parse_input(component)
+        catalog     = obj['catalog']
+        comp_spec   = catalog.get_component_spec(cname, cver)
+
+    #  Check if component is running and healthy
+    active_profile = profiles.get_profile()
+    consul_host    = active_profile.consul_host
+    service_name   = os.environ["SERVICE_NAME"]
+    if dis.is_healthy(consul_host, service_name):
+        pass
+    else:
+        click.echo("ERROR: The component must be running and healthy.  It is not.")
+        click.echo("")
+        return
+
+    try:
+        policy_reconfig_path = comp_spec['auxilary']['policy']['script_path']
+    except KeyError:
+        click.echo("ERROR: Policy Reconfig Path (auxilary/policy/script_path) is not specified in the Component Spec")
+        click.echo("")
+        return
+
+    kvUpdated = dis.policy_update(policy_change_file)
+
+    if kvUpdated:
+        active_profile = profiles.get_profile()
+        docker_logins  = dis.get_docker_logins()
+
+        command = dis.build_policy_command(policy_reconfig_path, policy_change_file)
+
+        #  Run the Policy Reconfig script
+        client = du.get_docker_client(active_profile, docker_logins)
+        du.reconfigure(client, service_name, command)
+    else:
+        click.echo("ERROR: There was a problem updating the policies in Consul")
+        click.echo("")
+        return
+
+    click.echo("")
+    click.echo("The End of Component Reconfiguration")

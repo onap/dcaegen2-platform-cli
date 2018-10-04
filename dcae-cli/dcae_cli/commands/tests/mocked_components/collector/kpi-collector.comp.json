@@ -24,7 +24,10 @@
     {
       "name": "sleep_sec",
       "value": 0.75,
-      "description": "Number of seconds to sleep between publishes"
+      "description": "Number of seconds to sleep between publishes",
+      "designer_editable": false,
+      "sourced_at_deployment": false,
+      "policy_editable": false
     }
   ],
   "auxilary": {

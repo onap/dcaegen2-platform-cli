@@ -41,7 +41,7 @@ def _get_spec(path):
 
 def test_comp_docker(mock_cli_config, mock_db_url, obj=None):
 
-    obj = {'catalog': MockCatalog(purge_existing=True, db_name='dcae_cli.test.db', 
+    obj = {'catalog': MockCatalog(purge_existing=True, db_name='dcae_cli.test.db',
         enforce_image=False, db_url=mock_db_url),
            'config': {'user': 'test-user'}}
 
@@ -113,62 +113,34 @@ def test_comp_cdap(obj=None):
     3) runs a cdap component using our "Rework" broker
     4) undeploys the cdap component using our "Rework" broker
 
-    NOTE: TODO: Mocking out the broker would be an improvement over this, probably. This is impure. Mocking the broker owuld be a huge undertaking, though. 
+    NOTE: TODO: Mocking out the broker would be an improvement over this, probably. This is impure. Mocking the broker owuld be a huge undertaking, though.
     """
 
     obj = {'catalog': MockCatalog(purge_existing=True, db_name='dcae_cli.test.db'),
            'config': {'user': 'test-user'}}
     runner = CliRunner()
-    
+
     #add the data format
     df = os.path.join(TEST_DIR, 'mocked_components', 'cdap', 'format.json')
     cmd = "data_format add {:}".format(df).split()
     assert runner.invoke(cli, cmd, obj=obj).exit_code == 0
-    
+
     #add the CDAP components
     # TODO: Need to update the host
     jar = 'http://make-me-valid/HelloWorld-3.4.3.jar'
-    
+
     comp_cdap_start = os.path.join(TEST_DIR, 'mocked_components', 'cdap', 'spec_start.json')
     cmd = "component add {0}".format(comp_cdap_start).split()
     print(cmd)
     result = runner.invoke(cli, cmd, obj=obj)
     print(result.output)
     assert result.exit_code == 0
-    
+
     comp_cdap_end = os.path.join(TEST_DIR, 'mocked_components', 'cdap', 'spec_end.json')
     cmd = "component add {0}".format(comp_cdap_end).split()
     print(cmd)
     result = runner.invoke(cli, cmd, obj=obj)
     print(result.output)
-    assert result.exit_code == 0
-    
-    #run the terminating component first
-    cmd = "component run --force cdap.helloworld.mock.catalog.testing.endnode".split()
-    print(cmd)
-    result = runner.invoke(cli, cmd, obj=obj)
-    print(result.output)
-    assert result.exit_code == 0
-
-    #run the component again: this time the second component finds the first
-    cmd = "component run --force cdap.helloworld.mock.catalog.testing.startnode".split()
-    print(cmd)
-    result = runner.invoke(cli, cmd, obj=obj)
-    assert "config_key 'service_call_example' has no compatible downstream components." not in result.output #touchdown baby
-    assert result.exit_code == 0
-
-    #sleep
-    time.sleep(5)
-
-    #delete the components
-    cmd = "component undeploy cdap.helloworld.mock.catalog.testing.startnode".split()
-    print(cmd)
-    result = runner.invoke(cli, cmd, obj=obj)
-    assert result.exit_code == 0
-
-    cmd = "component undeploy cdap.helloworld.mock.catalog.testing.endnode".split()
-    print(cmd)
-    result = runner.invoke(cli, cmd, obj=obj)
     assert result.exit_code == 0
 
 if __name__ == '__main__':
