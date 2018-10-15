@@ -614,7 +614,7 @@ def config_context(user, cname, cver, params, interface_map, instance_map,
                 remove_config(conf_key, host)
 
 
-def policy_update(policy_change_file):
+def policy_update(policy_change_file, consul_host):
 
     #  Determine if it is an 'updated_policies' or 'removed_policies' change, or if user included ALL policies
     policies = True if "policies"         in policy_change_file.keys() else False
@@ -726,7 +726,7 @@ def extract_policy_id(policy_folder, policy):
         return
 
 
-def build_policy_command(policy_reconfig_path, policy_change_file):
+def build_policy_command(policy_reconfig_path, policy_change_file, consul_host):
         """ Build command to execute the Policy Reconfig script in the Docker container """
 
         #  Determine if it is an 'updated_policies' and/or 'removed_policies' change, or if user included ALL policies

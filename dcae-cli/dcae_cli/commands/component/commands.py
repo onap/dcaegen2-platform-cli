@@ -374,13 +374,13 @@ def reconfig(obj, policy_file, component):
         click.echo("")
         return
 
-    kvUpdated = dis.policy_update(policy_change_file)
+    kvUpdated = dis.policy_update(policy_change_file, dis.default_consul_host())
 
     if kvUpdated:
         active_profile = profiles.get_profile()
         docker_logins  = dis.get_docker_logins()
 
-        command = dis.build_policy_command(policy_reconfig_path, policy_change_file)
+        command = dis.build_policy_command(policy_reconfig_path, policy_change_file, dis.default_consul_host())
 
         #  Run the Policy Reconfig script
         client = du.get_docker_client(active_profile, docker_logins)
