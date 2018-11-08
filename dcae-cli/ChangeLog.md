@@ -105,7 +105,7 @@ EDIT: This one addressed the issue in the catalog
 * Update sqlalchemy and catalog to support postgres and remove mysql support. Still compatible with sqlite.
 * Add the `catalog` command used to tap into the shared catalog
 * Change the `component` and the `data_format` command to be for the particular user of the dcae-cli
-* Changes to support component spec v3: folding of the auxilary specs into the component spec and adding of the property artifacts
+* Changes to support component spec v3: folding of the auxiliary specs into the component spec and adding of the property artifacts
 * Add the ability to publish components and data formats
 
 ## [1.6.0]
@@ -137,4 +137,4 @@ EDIT: This one addressed the issue in the catalog
 
 ## [0.11.0]
 
-* Make CDAP Paramaters follow parameters definitions
+* Make CDAP Parameters follow parameters definitions
