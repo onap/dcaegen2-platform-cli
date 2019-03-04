@@ -1,0 +1,101 @@
+{
+	"self": {
+		"component_type": "docker",
+		"description": "Test component spec",
+		"name": "test.component.spec",
+		"version": "1.0.1"
+	},
+
+	"service": {
+		"calls": [],
+		"provides": []
+	},
+
+	"streams": {
+		"publishes": [{
+				"config_key": "TEST-PUB-DR",
+				"format": "dataformat_Hello_World_PM",
+				"type": "data_router",
+				"version": "1.0.0"
+			},
+			{
+				"config_key": "TEST-PUB-MR",
+				"format": "dataformat_Hello_World_PM",
+				"type": "message_router",
+				"version": "1.0.0"
+			}
+		],
+
+		"subscribes": [{
+				"config_key": "TEST-SUB-MR",
+				"format": "dataformat_Hello_World_PM",
+				"route": "/TEST_HELLO_WORLD_SUB_MR",
+				"type": "message_router",
+				"version": "1.0.0"
+			},
+			{
+				"config_key": "TEST-SUB-DR",
+				"format": "dataformat_Hello_World_PM",
+				"route": "/TEST-HELLO-WORLD-SUB-DR",
+				"type": "data_router",
+				"version": "1.0.0"
+			}		
+		]
+	},
+
+	"parameters":
+	[
+		{
+			"name": "testParam1",
+			"description": "test parameter 1",
+			"value": "test-param-1",
+			"type": "string",
+			"sourced_at_deployment": true,
+			"designer_editable": true,
+			"policy_editable": true,
+			"policy_group": "Test_Parameters",
+			"required": true
+		}
+	],
+
+	"auxilary": {
+		"healthcheck": {
+			"type": "docker",
+			"interval": "300s",
+			"timeout": "120s",
+			"script": "/etc/init.d/nagios status"
+		},
+
+		"databases" : {
+          "TestDB1": "PGaaS",
+          "TestDB2": "PGaaS"
+        },
+
+		"policy": {
+			"trigger_type": "docker",
+			"script_path": "/opt/app/manager/bin/reconfigure.sh"
+		},
+		"volumes": [
+			{
+				"container": {
+					"bind": "/opt/app/manager/config/hostname"
+				},
+				"host": {
+					"path": "/etc/hostname",
+					"mode": "ro"
+				}
+			}
+
+		],
+		"ports": [
+			"80:80",
+			"99:99"
+		]
+	},
+
+	    "artifacts": [{
+		"type": "docker image",
+		"uri": "test.tester"
+	}]	
+
+}
