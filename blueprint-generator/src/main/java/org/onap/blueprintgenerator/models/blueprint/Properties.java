@@ -62,11 +62,14 @@ public class Properties {
 		logD.setGet_input("log_directory");
 		this.setLog_info(logD);
 		String logger = "";
-		for(Volumes v: cs.getAuxilary().getVolumes()) {
-			if(v.getContainer().getBind().contains("/opt/app/") && v.getContainer().getBind().contains("logs")) {
-				logger = v.getContainer().getBind();
+		if(cs.getAuxilary().getVolumes() != null) {
+			for(Volumes v: cs.getAuxilary().getVolumes()) {
+				if(v.getContainer().getBind().contains("/opt/app/") && v.getContainer().getBind().contains("logs")) {
+					logger = v.getContainer().getBind();
+				}
 			}
 		}
+
 		LinkedHashMap<String, Object> logInp = new LinkedHashMap<String, Object>();
 		logInp.put("type", "string");
 		if(logger != "") {
