@@ -1,0 +1,149 @@
+{
+  "$id": "http://onap.org/dcaegen2/platform/dmaap",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Schema for dmaap inputs",
+  "type": "object",
+
+  "oneOf": [
+    { "$ref": "#/definitions/message_router" },
+    { "$ref": "#/definitions/data_router" },
+    { "$ref": "#/definitions/kafka" }
+  ],
+
+  "definitions": {
+  
+    "message_router": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["message_router"]
+        },
+        "aaf_credentials": {
+          "$ref": "#/definitions/aaf_credentials"
+        },
+        "aaf_username": {
+          "description": "Used for backward compatibility. Use aaf_credentials object in new code.",
+          "type": "string"
+        },
+        "aaf_password": {
+          "description": "Used for backward compatibility. Use aaf_credentials object in new code.",
+          "type": "string"
+        },
+        "dmaap_info": {
+          "$ref":"#/definitions/dmaap_info"
+        }
+      },
+      "required": [
+        "type",
+        "dmaap_info"
+      ],
+      "additionalProperties": false
+    },
+
+    "data_router": {
+      "type": "object",
+      "$comment": "This is currently not specified in schema. However, it is specified in RTD documentation. TODO: specify schema for DMaaP DR",     
+       "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["data_router"]
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": true
+    },
+
+    "dmaap_info": {
+      "type": "object",
+      "properties": {
+        "client_role": {
+          "type": "string"
+        },
+        "client_id": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "topic_url": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "topic_url"
+      ],
+      "additionalProperties": false
+    },
+
+    "kafka": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["kafka"]
+        },
+        "aaf_credentials": {
+          "$ref": "#/definitions/aaf_credentials"
+        },
+        "kafka_info": {
+           "$ref": "#/definitions/kafka_info"
+        }
+      },
+      "required": [
+        "type",
+        "kafka_info"
+      ],
+      "additionalProperties": false
+    },
+
+    "kafka_info": {
+      "type": "object",
+      "description": "Defines Kafka-specific topid properties",
+      "properties": {
+        "client_role": {
+          "type": "string"
+        },
+        "client_id": {
+          "type": "string"
+        },
+        "bootstrap_servers": {
+          "description": "Comma separated list of Kafka bootstrap servers as defined in Kafka documentation",
+          "type": "string"
+        },
+        "topic_name": {
+          "description": "Name of the topic",
+          "type": "string"
+        },
+        "consumer_group_id": {
+          "description": "Can be specifed only for subscribers. More details in Kafka documentation on group.id property",
+          "type": "string"
+        },
+        "max_payload_size_bytes": {
+          "description": "Maximum payload size in bytes. Can be used for validation or creating Kafka client properties.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bootstrap_servers",
+        "topic_name"
+      ],
+      "additionalProperties": false
+    },
+
+    "aaf_credentials": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

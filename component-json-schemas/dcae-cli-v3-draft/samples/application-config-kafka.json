@@ -1,0 +1,26 @@
+{
+    "streams_publishes": {
+        "perf3gpp_regional": {
+            "type": "kafka",
+            "aaf_credentials": {
+                "username": "client",
+                "password": "very secure password"
+            },
+            "kafka_info": {
+                "bootstrap_servers": "dmaap-mr-kafka-0.regional:6060,dmaap-mr-kafka-1.regional:6060",
+                "topic_name": "REG_HVVES_PERF3GPP"
+            }
+        },
+        "perf3gpp_central": {
+            "type": "kafka",
+            "aaf_credentials": {
+                "username": "other_client",
+                "password": "another very secure password"
+            },
+            "kafka_info": {
+                "bootstrap_servers": "dmaap-mr-kafka-0.central:6060,dmaap-mr-kafka-1.central:6060",
+                "topic_name": "CEN_HVVES_PERF3GPP"
+            }
+        }
+    }
+}
