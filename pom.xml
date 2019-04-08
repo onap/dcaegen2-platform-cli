@@ -89,6 +89,7 @@ ECOMP is a trademark and service mark of AT&T Intellectual Property.
             <skip>true</skip>
           </configuration>
         </plugin>
+
         <!-- maven-jar-plugin is called during "compile" phase by default behavior.  we do not need it -->
        <!-- <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -127,7 +128,7 @@ ECOMP is a trademark and service mark of AT&T Intellectual Property.
           <version>1.2.1</version>
           <configuration>
             <executable>${session.executionRootDirectory}/mvn-phase-script.sh</executable>
-            <environmentVariables> -->
+            <environmentVariables> 
               <!-- make mvn properties as env for our script -->
               <!-- make mvn properties as env for our script -->
              <MVN_PROJECT_GROUPID>${project.groupId}</MVN_PROJECT_GROUPID>

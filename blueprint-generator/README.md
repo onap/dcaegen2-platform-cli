@@ -12,13 +12,13 @@ This tool allows the user to create a blueprint from a component spec json file
 - If you're on windows type this out before you add your flags 
 
 ```bash
-java -cp "lib/blueprint-generator-onap-0.0.1-SNAPSHOT.jar;lib/*" org.onap.blueprintgenerator.core.BlueprintGenerator
+java -cp "lib/blueprint-generator-1.0.0-SNAPSHOT.jar;lib/*" org.onap.blueprintgenerator.core.BlueprintGenerator
 ```
 
 -If you're on linux type this out before you add your flags
 
 ```bash
-java -cp blueprint-generator/lib/blueprint-generator-0.0.1-SNAPSHOT.jar:blueprint-generator/lib/* org.onap.blueprintgenerator.core.BlueprintGenerator
+java -cp blueprint-generator/lib/blueprint-generator-1.0.0-SNAPSHOT.jar:blueprint-generator/lib/* org.onap.blueprintgenerator.core.BlueprintGenerator
 ```
 
 
