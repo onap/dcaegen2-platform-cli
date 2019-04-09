@@ -49,8 +49,8 @@ setup(
                       'click>=6.0,<7.0',
                       'jsonschema',
                       'terminaltables',
-                      'psycopg2',
-                      'psycopg2-binary',
+                      'psycopg2==2.7.5',
+                      'psycopg2-binary==2.7.5',
                       'genson',
                       'onap-dcae-discovery-client>=2.0.0',
                       'onap-dcae-dockering>=1.0.0,<2.0.0'
