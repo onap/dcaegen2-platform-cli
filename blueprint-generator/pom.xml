@@ -44,35 +44,8 @@
 	</properties>
 
 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-				</configuration>
-				<version>2.0.2</version>
-			</plugin>	      
+		<plugins>	      
         <!-- the following plugins are invoked from oparent, we do not need them -->
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.7</version>
-                <configuration>
-                    <skipNexusStagingDeployMojo>false</skipNexusStagingDeployMojo>
-                    <skip>false</skip>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <!-- This version supports the "deployAtEnd" parameter -->
-                <version>2.8</version>
-                <configuration>
-                     <skip>true</skip>
-                </configuration>
-            </plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.4.1</version>
@@ -162,17 +135,6 @@
 			</plugin>
 		</plugins>
 	</reporting>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ecomp-snapshots</id>
-            <url>https://nexus.onap.org/content/repositories/snapshots/</url>
-        </snapshotRepository>
-        <repository>
-        	<id>ecomp-staging</id>
-        	<url>https://nexus.onap.org/content/groups/staging/</url>
-        </repository>
-    </distributionManagement>
 
 
 	<dependencies>
