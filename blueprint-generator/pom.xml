@@ -168,6 +168,10 @@
             <id>ecomp-snapshots</id>
             <url>https://nexus.onap.org/content/repositories/snapshots/</url>
         </snapshotRepository>
+        <repository>
+        	<id>ecomp-staging</id>
+        	<url>https://nexus.onap.org/content/groups/staging/</url>
+        </repository>
     </distributionManagement>
 
 
