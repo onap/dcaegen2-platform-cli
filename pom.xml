@@ -50,17 +50,16 @@ ECOMP is a trademark and service mark of AT&T Intellectual Property.
     <finalName>${project.artifactId}-${project.version}</finalName>
     <pluginManagement>
       <plugins>
-        <!-- the following plugins are invoked from oparent, we do not need them 
+        <!-- the following plugins are invoked from oparent, we do not need them -->
         <plugin>
           <groupId>org.sonatype.plugins</groupId>
           <artifactId>nexus-staging-maven-plugin</artifactId>
           <version>1.6.7</version>
           <configuration>
             <skipNexusStagingDeployMojo>false</skipNexusStagingDeployMojo>
-            <skip>false</skip>
           </configuration>
         </plugin>
-        <plugin>
+       <!-- <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-deploy-plugin</artifactId>
           This version supports the "deployAtEnd" parameter 
