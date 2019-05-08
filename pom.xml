@@ -39,7 +39,6 @@ ECOMP is a trademark and service mark of AT&T Intellectual Property.
   <modules>
      <module>dcae-cli</module>
      <module>component-json-schemas</module> 
-     <module>blueprint-generator</module> 
   </modules>
 
   <properties>
