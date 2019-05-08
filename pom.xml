@@ -55,9 +55,6 @@ ECOMP is a trademark and service mark of AT&T Intellectual Property.
           <groupId>org.sonatype.plugins</groupId>
           <artifactId>nexus-staging-maven-plugin</artifactId>
           <version>1.6.7</version>
-          <configuration>
-            <skipNexusStagingDeployMojo>false</skipNexusStagingDeployMojo>
-          </configuration>
         </plugin>
        <!-- <plugin>
           <groupId>org.apache.maven.plugins</groupId>
