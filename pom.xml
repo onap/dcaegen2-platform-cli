@@ -38,7 +38,7 @@ ECOMP is a trademark and service mark of AT&T Intellectual Property.
   <packaging>pom</packaging>
   <modules>
      <module>dcae-cli</module>
-     <module>component-json-schemas</module> 
+     <module>component-json-schemas</module>
   </modules>
 
   <properties>
@@ -54,19 +54,23 @@ ECOMP is a trademark and service mark of AT&T Intellectual Property.
           <groupId>org.sonatype.plugins</groupId>
           <artifactId>nexus-staging-maven-plugin</artifactId>
           <version>1.6.7</version>
+          <configuration>
+            <skipNexusStagingDeployMojo>false</skipNexusStagingDeployMojo>
+            <skip>false</skip>
+          </configuration>
         </plugin>
-       <!-- <plugin>
+        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-deploy-plugin</artifactId>
-          This version supports the "deployAtEnd" parameter 
+          <!-- This version supports the "deployAtEnd" parameter -->
           <version>2.8</version>
           <configuration>
             <skip>true</skip>
           </configuration>
-        </plugin> -->
+        </plugin>
         <!-- first disable the default Java plugins at various stages -->
         <!-- maven-resources-plugin is called during "*resource" phases by default behavior.  it prepares 
-         the resources dir.  we do not need it 
+         the resources dir.  we do not need it -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
@@ -74,8 +78,8 @@ ECOMP is a trademark and service mark of AT&T Intellectual Property.
           <configuration>
             <skip>true</skip>
           </configuration>
-        </plugin> -->
-        <!-- maven-compiler-plugin is called during "compile" phases by default behavior.  we do not need it 
+        </plugin>
+        <!-- maven-compiler-plugin is called during "compile" phases by default behavior.  we do not need it -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
@@ -83,8 +87,7 @@ ECOMP is a trademark and service mark of AT&T Intellectual Property.
           <configuration>
             <skip>true</skip>
           </configuration>
-        </plugin> -->
-
+        </plugin>
         <!-- maven-jar-plugin is called during "compile" phase by default behavior.  we do not need it -->
        <!-- <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -98,7 +101,7 @@ ECOMP is a trademark and service mark of AT&T Intellectual Property.
           </executions>
         </plugin> -->
         <!-- maven-install-plugin is called during "install" phase by default behavior.  it tries to copy stuff under 
-         target dir to ~/.m2.  we do not need it 
+         target dir to ~/.m2.  we do not need it -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-install-plugin</artifactId>
@@ -106,7 +109,7 @@ ECOMP is a trademark and service mark of AT&T Intellectual Property.
           <configuration>
             <skip>true</skip>
           </configuration>
-        </plugin> -->
+        </plugin>
         <!-- maven-surefire-plugin is called during "test" phase by default behavior.  it triggers junit test.
          we do not need it -->
         <plugin>
@@ -123,7 +126,7 @@ ECOMP is a trademark and service mark of AT&T Intellectual Property.
           <version>1.2.1</version>
           <configuration>
             <executable>${session.executionRootDirectory}/mvn-phase-script.sh</executable>
-            <environmentVariables> 
+            <environmentVariables> -->
               <!-- make mvn properties as env for our script -->
               <!-- make mvn properties as env for our script -->
              <MVN_PROJECT_GROUPID>${project.groupId}</MVN_PROJECT_GROUPID>
