@@ -30,11 +30,9 @@ import lombok.Getter; import lombok.Setter;
 @Getter @Setter
 public class Interfaces {
 	private Start start;
-	
-	public TreeMap<String, LinkedHashMap<String, Object>> createOnapInterface(TreeMap<String, LinkedHashMap<String, Object>> inps, ComponentSpec cs){
+	public TreeMap<String, LinkedHashMap<String, Object>> createInterface(TreeMap<String, LinkedHashMap<String, Object>> inps, ComponentSpec cs){
 		TreeMap<String, LinkedHashMap<String, Object>> retInputs = new TreeMap<String, LinkedHashMap<String, Object>>();
 		retInputs = inps;
-		
 		//create the start object
 		Start start = new Start();
 		retInputs = start.createOnapStart(retInputs, cs);

@@ -40,34 +40,25 @@ public class BlueprintGenerator {
 	private static String outputPath = "";
 
 	private static char bpType = 'o';
-	
+
 	private static String importPath = "";
+	
+	private static String override = "";
 
 
 	public static void main(String[] args) throws Exception {
 
 		printInstructions();
-		
+
 		parseInputs(args);
-		
 
 		//create the component Spec we are going to be working with
 		ComponentSpec cs = new ComponentSpec();
 		cs.createComponentSpecFromFile(componentSpecPath);
-//		if(bpType != 't') {
-//			cs.createComponentSpecFromFile(componentSpecPath);
-//		}
-//		if(bpType == 't') {
-//			Self self = new Self();
-//			self.setName("blueprint_template");
-//			self.setDescription("A template yaml file for blueprints");
-//			self.setVersion("1.0.0");
-//			self.setComponent_type("template");
-//			cs.setSelf(self);
-//		}
 
+		//create the blueprint and convert it to a yaml file
 		Blueprint bp = new Blueprint();
-		bp = bp.createBlueprint(cs, bluePrintName, bpType, importPath);
+		bp = bp.createBlueprint(cs, bluePrintName, bpType, importPath, override);
 		bp.blueprintToYaml(outputPath, bluePrintName, cs);
 	}
 
@@ -78,10 +69,9 @@ public class BlueprintGenerator {
 		System.out.println("-n: Name of the blueprint (optional)");
 		System.out.println("-p: The path to the final blueprint (required)");
 		System.out.println("-t: The path to the yaml import file (optional)");
-		//System.out.println("-t: This flag will create a template of how a blueprint will look. No ComponentSpec is required if you add this flag (optional");
-
+		System.out.println("-d: With this flag present the blueprint will be created with the dmaap plugin enables");
+		System.out.println("-o: The value you want for service_component_name_override (optional)");
 	}
-
 
 	public static void parseInputs(String[] args) throws Exception {
 		//convert the arguments array to a string to make it easier
@@ -92,20 +82,10 @@ public class BlueprintGenerator {
 			}
 			else {
 				commands = commands + " " + s;
-			}	
+			}
 		}
+
 		//check if it has the required inputs
-//		if(commands.contains("-t")) {
-//			bpType = 't';
-//			CommandLineParser parser = new BasicParser();
-//			Options options = new Options();
-//			options.addOption("p", "Path", true, "Path to the final blueprint");
-//			options.addOption("i", "Spec", true, "ComponentSpec import file");
-//			options.addOption("n", "name", true, "Name of the blueprint");
-//			options.addOption("t", "Template", false, "Create a bp tempalte");
-//			CommandLine commandLine = parser.parse(options, args);
-//			outputPath = commandLine.getOptionValue("p");
-//		}
 		if(!commands.contains("-p") || !commands.contains("-i")) {
 			System.out.println("did not enter the required inputs");
 		}
@@ -116,21 +96,24 @@ public class BlueprintGenerator {
 			options.addOption("p", "Path", true, "Path to the final blueprint");
 			options.addOption("n", "Name", true, "Name of the blueprint");
 			options.addOption("t", "imports", true, "Path to the import file");
+			options.addOption("d", "Dmaap", false, "Enable the dmaap plugin");
+			options.addOption("o", "Override", true, "service component name override");
 
 			CommandLine commandLine = parser.parse(options, args);
 			componentSpecPath = commandLine.getOptionValue("i");
 			outputPath = commandLine.getOptionValue("p");
+			override = commandLine.getOptionValue("o");
 			if(!(commandLine.getOptionValue("n") == null)){
 				bluePrintName = commandLine.getOptionValue("n");
 			}
 			if(!(commandLine.getOptionValue("t") == null)) {
 				importPath = commandLine.getOptionValue("t");
 			}
+			if(commands.contains("-d")) {
+				bpType = 'd';
+			}
 		}
 
 	}
-
-
-
 }
 

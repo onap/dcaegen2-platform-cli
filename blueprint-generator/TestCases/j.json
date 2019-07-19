@@ -1,0 +1,96 @@
+{
+	"self": {
+		"component_type": "docker",
+		"description": "Hello World mS for subscribing the data from local DMaaP, DR or MR, processing them and publishing them as PM files to local DMaaP DR",
+		"name": "dcae.test.ms",
+		"version": "1.0.0"
+	},
+
+	"services": {
+		"calls": [],
+		"provides": []
+	},
+
+	"streams": {
+		"publishes": [{
+				"config_key": "DCAE-HELLO-WORLD-PUB-DR",
+				"format": "dataformat_Hello_World_PM",
+				"type": "data_router",
+				"version": "1.0.0"
+			},
+			{
+				"config_key": "DCAE-HELLO-WORLD-PUB-MR",
+				"format": "dataformat_Hello_World_PM",
+				"type": "message_router",
+				"version": "1.0.0"
+			}
+		],
+
+		"subscribes": [{
+				"config_key": "DCAE-HELLO-WORLD-SUB-MR",
+				"format": "dataformat_Hello_World_PM",
+				"route": "/DCAE_HELLO_WORLD_SUB_MR",
+				"type": "message_router",
+				"version": "1.0.0"
+			},
+			{
+				"config_key": "DCAE-HELLO-WORLD-SUB-DR",
+				"format": "dataformat_Hello_World_PM",
+				"route": "/DCAE-HELLO-WORLD-SUB-DR",
+				"type": "data_router",
+				"version": "1.0.0"
+			}
+		]
+	},
+
+    "parameters":
+    [
+        {
+            "name": "vcc_hello_name",
+            "value": "fsdfa",
+            "description": "the name entered for specific person",
+			"sourced_at_deployment": true,
+			"designer_editable": true,
+			"policy_editable": false,
+			"type": "string"
+        },
+
+        {
+			"name": "useDtiConfig",
+			"value": false,
+			"description": "component depends on configuration from dti.",
+			"sourced_at_deployment": false,
+			"designer_editable": false,
+			"policy_editable": false,
+			 "required" : true
+		},
+
+		{
+			"name": "isSelfServeComponent",
+			"value": false,
+			"description": "Is this used as self serve component.",
+			"sourced_at_deployment": false,
+			"designer_editable": false,
+			"policy_editable": false,
+			"required" : true,
+			"type": "string"
+		}
+    ],
+
+	"auxilary": {
+		"healthcheck": {
+			"interval": "60s",
+			"timeout": "20s",
+			"endpoint": "/",
+			"type": "http"
+		},
+        "ports" : [
+            "80:0"
+        ]
+    },
+
+    "artifacts": [{
+		"type": "docker image",
+		"uri": "nginx"
+	}]
+}

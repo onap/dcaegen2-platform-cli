@@ -45,30 +45,27 @@ import lombok.NoArgsConstructor;
 @JsonInclude(value=Include.NON_NULL)
 
 public class OnapNode extends Node{
-	
 	private TreeMap<String, Interfaces> interfaces;
 	private Properties properties;
-	
-	
-	public TreeMap<String, LinkedHashMap<String, Object>> createOnapNode(TreeMap<String, LinkedHashMap<String, Object>> inps, ComponentSpec cs) {
+	public TreeMap<String, LinkedHashMap<String, Object>> createOnapNode(TreeMap<String, LinkedHashMap<String, Object>> inps, ComponentSpec cs, String override) {
 		TreeMap<String, LinkedHashMap<String, Object>> retInputs = new TreeMap<String, LinkedHashMap<String, Object>>();
 		retInputs = inps;
-		
+
 		//create and set the interfaces
 		Interfaces inter = new Interfaces();
-		retInputs = inter.createOnapInterface(retInputs, cs);
+		retInputs = inter.createInterface(retInputs, cs);
 		TreeMap<String, Interfaces> interfaces = new TreeMap<String, Interfaces>();
 		interfaces.put("cloudify.interfaces.lifecycle", inter);
 		this.setInterfaces(interfaces);
-		
+
 		//set the type
 		this.setType("dcae.nodes.ContainerizedPlatformComponent");
-		
+
 		//set the properties
 		Properties props = new Properties();
-		retInputs = props.createOnapProperties(retInputs, cs);
+		retInputs = props.createOnapProperties(retInputs, cs, override);
 		this.setProperties(props);
-		
+
 		return retInputs;
 	}
 }

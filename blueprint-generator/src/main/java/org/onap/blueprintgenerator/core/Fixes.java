@@ -39,18 +39,18 @@ public class Fixes {
 		try {
 			FileReader fr = new FileReader(translateFile);
 			BufferedReader br = new BufferedReader(fr);
-		
 			while((line = br.readLine()) != null) {
 				if(line.contains("'")) {
 					line = line.replace("'", "");
 				}
+				if(line.contains("\"\"") && (line.contains("m") || line.contains("M"))) {
+					line = line.replaceAll("\"\"", "\"");
+				}
 				lines.add(line);
 
 			}
-			
 			fr.close();
 			br.close();
-			
 			FileWriter fw = new FileWriter(translateFile);
 			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(f, true)));
 			for(String s: lines) {

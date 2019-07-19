@@ -35,6 +35,7 @@ import org.onap.blueprintgenerator.models.componentspec.ComponentSpec;
 import org.onap.blueprintgenerator.models.componentspec.Parameters;
 import org.onap.blueprintgenerator.models.componentspec.Publishes;
 import org.onap.blueprintgenerator.models.componentspec.Subscribes;
+import org.onap.blueprintgenerator.models.dmaapbp.DmaapBlueprint;
 import org.onap.blueprintgenerator.models.onapbp.OnapBlueprint;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -60,29 +61,29 @@ public class Blueprint {
 
 	private String tosca_definitions_version;
 
+	private String description;
 
 	private ArrayList<String> imports;
 
-
 	private TreeMap<String, LinkedHashMap<String, Object>> inputs;
 
-
 	private TreeMap<String, Node> node_templates;
-	
-	public Blueprint createBlueprint(ComponentSpec cs, String name, char bpType, String importPath) {
+
+	public Blueprint createBlueprint(ComponentSpec cs, String name, char bpType, String importPath, String override) {
 		Blueprint bp = new Blueprint();
-		
 		if(bpType == 'o') {
 			OnapBlueprint onap = new OnapBlueprint();
-			bp = onap.createOnapBlueprint(cs, importPath);
+			bp = onap.createOnapBlueprint(cs, importPath, override);
 			bp = bp.setQuotations(bp);
 		}
-//		if(bpType == 't') {
-//			bp.createBlueprintTemplate();
-//		}
+
+		if(bpType == 'd') {
+			DmaapBlueprint dmaap = new DmaapBlueprint();
+			bp = dmaap.createDmaapBlueprint(cs, importPath, override);
+			bp = bp.setQuotations(bp);
+		}
 		return bp;
 	}
-	
 	public Blueprint setQuotations(Blueprint bp) {
 		for(String s: bp.getInputs().keySet()) {
 			LinkedHashMap<String, Object> temp = bp.getInputs().get(s);
@@ -96,51 +97,6 @@ public class Blueprint {
 		
 		return bp;
 	}
-	
-//	public void createBlueprintTemplate() {
-//		//set the tosca definition
-//		this.setTosca_definitions_version("cloudify_dsl_1_3");
-//		
-//		//set the imports
-//		Imports imps = new Imports();
-//		this.setImports(imps.createOnapImports());
-//		
-//		//create the needed inputs and just add the default ones
-//		TreeMap<String, LinkedHashMap<String, Object>> inputs = createTemplateInputs();
-//		this.setInputs(inputs);
-//		
-//		//create a node template
-//		TreeMap<String, Node> nodeTemplate = new TreeMap<String, Node>();
-//		TemplateNode template = new TemplateNode();
-//		template.createTemplateNode();
-//		nodeTemplate.put("Blueprint_Template", template);
-//		this.setNode_template(nodeTemplate);
-//		
-//		
-//	}
-//	//add tag, externam port, and replicas since they are in all the bps
-//	public TreeMap<String, LinkedHashMap<String, Object>> createTemplateInputs() {
-//		TreeMap<String, LinkedHashMap<String, Object>> inputs = new TreeMap<String, LinkedHashMap<String, Object>>();
-//		
-//		LinkedHashMap<String, Object> tag = new LinkedHashMap<String, Object>();
-//		tag.put("type", "string");
-//		tag.put("default", "{{ ONAPTEMPLATE_DOCKERREGURL_org_onap_dcaegen2_releases }}/onap/org.onap.dcaegen2.collectors.ves.vescollector:1.3.1");
-//		inputs.put("tag_version", tag);
-//		
-//		LinkedHashMap<String, Object> port = new LinkedHashMap<String, Object>();
-//		port.put("type", "string");
-//		port.put("description", "Kubernetes node port on which collector is exposed");
-//		port.put("default", "30235");
-//		inputs.put("external_port", port);
-//		
-//		LinkedHashMap<String, Object> rep = new LinkedHashMap<String, Object>();
-//		rep.put("type", "integer");
-//		rep.put("description", "number of instances");
-//		rep.put("default", 1);
-//		inputs.put("replicas", rep);
-//		
-//		return inputs;
-//	}
 
 	public void blueprintToYaml(String outputPath, String bluePrintName, ComponentSpec cs) {
 		File outputFile;

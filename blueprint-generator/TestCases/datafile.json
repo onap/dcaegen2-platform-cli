@@ -1,0 +1,426 @@
+{
+  "self": {
+    "name": "dcaegen2.collectors.datafile.datafile-app-server",
+    "version": "1.0.0",
+    "description": "Docker application to collect log file from PNF",
+    "component_type": "docker"
+  },
+  "streams": {
+    "subscribes": [
+      {
+        "type": "message_router",
+        "config_key": "datafile_subscribe_mr",
+        "format": "VES_specification",
+        "version": "7.30.1"
+      }
+    ],
+    "publishes": [
+      {
+        "type": "data_router",
+        "config_key": "datafile_publish_dr",
+        "format": "3GPP_XML",
+        "version": "1.0.0"
+      }
+    ]
+  },
+  "services": {
+    "calls": [],
+    "provides": []
+  },
+  "auxilary": {
+    "healthcheck": {
+      "type": "http",
+      "interval": "15s",
+      "timeout": "1s",
+      "endpoint": "/heartbeat"
+    }
+  },
+  "artifacts": [
+    {
+      "uri": "nexus3.onap.org:10001/onap/org.onap.dcaegen2.collectors.datafile.datafile-app-server:latest",
+      "type": "docker image"
+    }
+  ],
+  "parameters": [
+    {
+      "name": "service_name",
+      "value": "datafile",
+      "description": "Name of the service",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "buscontroller_feed_publishing_endpoint",
+      "value": "http://dmaap-bc.onap.svc.cluster.local:8080/webapi/feeds",
+      "description": "DMAAP Bus Controller feed endpoint",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": true,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "dmaap_dr_feed_id",
+      "value": "bulk_pm_feed",
+      "description": "ID of the data router feed that the datafile collector will publish",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "streams_consumer.datafile_consume_mr.message_router_topic",
+      "value": "/events/unauthenticated.VES_NOTIFICATION_OUTPUT",
+      "description": "datafile collector consume VES event to message router topic ",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "dmaap.dmaapConsumerConfiguration.dmaapHostName",
+      "value": "localhost",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "dmaap.dmaapConsumerConfiguration.dmaapPortNumber",
+      "value": "2222",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "dmaap.dmaapConsumerConfiguration.dmaapTopicName",
+      "value": "/events/unauthenticated.VES_NOTIFICATION_OUTPUT",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "dmaap.dmaapConsumerConfiguration.dmaapProtocol",
+      "value": "http",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "dmaap.dmaapConsumerConfiguration.dmaapContentType",
+      "value": "application/json",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "dmaap.dmaapConsumerConfiguration.consumerId",
+      "value": "C12",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "dmaap.dmaapConsumerConfiguration.consumerGroup",
+      "value": "OpenDcae-c12",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "dmaap.dmaapConsumerConfiguration.timeoutMs",
+      "value": "-1",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "dmaap.dmaapConsumerConfiguration.messageLimit",
+      "value": "1",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "dmaap.dmaapProducerConfiguration.dmaapHostName",
+      "value": "localhost",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "dmaap.dmaapProducerConfiguration.dmaapPortNumber",
+      "value": "3907",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "dmaap.dmaapProducerConfiguration.dmaapTopicName",
+      "value": "publish",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "dmaap.dmaapProducerConfiguration.dmaapProtocol",
+      "value": "https",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "dmaap.dmaapProducerConfiguration.dmaapUserName",
+      "value": "dradmin",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "dmaap.dmaapProducerConfiguration.dmaapUserPassword",
+      "value": "dradmin",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "dmaap.dmaapProducerConfiguration.dmaapContentType",
+      "value": "application/octet-stream",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "ftp.ftpesConfiguration.keyCert",
+      "value": "config/dfc.jks",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "ftp.ftpesConfiguration.keyPassword",
+      "value": "secret",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "ftp.ftpesConfiguration.trustedCA",
+      "value": "config/ftp.jks",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "ftp.ftpesConfiguration.trustedCAPassword",
+      "value": "secret",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "security.trustStorePath",
+      "value": "/opt/app/datafile/etc/cert/trust.jks",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "security.trustStorePasswordPath",
+      "value": "/opt/app/datafile/etc/cert/trust.pass",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "security.keyStorePath",
+      "value": "/opt/app/datafile/etc/cert/key.p12",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "security.keyStorePasswordPath",
+      "value": "/opt/app/datafile/etc/cert/key.pass",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "security.enableDmaapCertAuth",
+      "value": false,
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "dmaap.dmaapBusControllerConfiguration.dmaapHostName",
+      "value": "localhost",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "dmaap.dmaapBusControllerConfiguration.dmaapPortNumber",
+      "value": "6666",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "dmaap.dmaapBusControllerConfiguration.dmaapTopicName",
+      "value": "webapis/feeds",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "dmaap.dmaapBusControllerConfiguration.dmaapDrFeedName",
+      "value": "bulk_pm_feed",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "dmaap.dmaapBusControllerConfiguration.dmaapProtocol",
+      "value": "https",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "dmaap.dmaapBusControllerConfiguration.dmaapUserName",
+      "value": "dbcadmin",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "dmaap.dmaapBusControllerConfiguration.dmaapUserPassword",
+      "value": "dbcadmin",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "dmaap.dmaapBusControllerConfiguration.dmaapContentType",
+      "value": "application/json",
+      "description": "",
+      "designer_editable": true,
+      "sourced_at_deployment": false,
+      "policy_editable": false,
+      "type": "string",
+      "required": true
+    },
+    {
+      "name": "datafile.policy",
+      "value": "",
+      "description": "datafile Policy JSON as string",
+      "designer_editable": false,
+      "sourced_at_deployment": false,
+      "policy_editable": true,
+      "type": "string",
+      "required": true
+    }
+  ]
+}

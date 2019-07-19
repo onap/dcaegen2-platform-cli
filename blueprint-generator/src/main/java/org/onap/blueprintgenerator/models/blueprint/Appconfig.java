@@ -48,7 +48,7 @@ public class Appconfig {
 		return params;
 	}
 
-	public TreeMap<String, LinkedHashMap<String, Object>> createOnapAppconfig(TreeMap<String, LinkedHashMap<String, Object>> inps, ComponentSpec cs) {
+	public TreeMap<String, LinkedHashMap<String, Object>> createAppconfig(TreeMap<String, LinkedHashMap<String, Object>> inps, ComponentSpec cs, String override) {
 		TreeMap<String, LinkedHashMap<String, Object>> retInputs = new TreeMap<String, LinkedHashMap<String, Object>>();
 		retInputs = inps;
 
@@ -58,23 +58,26 @@ public class Appconfig {
 
 		//set the stream publishes
 		TreeMap<String, DmaapObj> streamPublishes = new TreeMap<String, DmaapObj>();
-
+		int counter = 0;
 		if(cs.getStreams().getPublishes().length != 0) {
 			for(Publishes p: cs.getStreams().getPublishes()) {
 				if(p.getType().equals("data_router") || p.getType().equals("data router")) {
 					//in this case the data router information gets added to the params so for now leave it alone
 					String config = p.getConfig_key();
 					DmaapObj pub = new DmaapObj();
-					retInputs = pub.createOnapDmaapDRObj(retInputs, config, 'p');
+					String name = "feed" + counter;
+					retInputs = pub.createOnapDmaapDRObj(retInputs, config, 'p', "feed" + counter, name);
 					pub.setType(p.getType());
 					streamPublishes.put(config, pub);
 				} else if(p.getType().equals("message_router") || p.getType().equals("message router")) {
 					String config = p.getConfig_key();
 					DmaapObj pub = new DmaapObj();
-					retInputs = pub.createOnapDmaapMRObj(retInputs, config, 'p');
+					String name = "topic" + counter;
+					retInputs = pub.createOnapDmaapMRObj(retInputs, config, 'p', "topic" + counter, name);
 					pub.setType(p.getType());
 					streamPublishes.put(config, pub);
 				}
+				counter++;
 			}
 		}
 
@@ -87,16 +90,19 @@ public class Appconfig {
 					//in this case the data router information gets added to the params so for now leave it alone
 					String config = s.getConfig_key();
 					DmaapObj sub = new DmaapObj();
-					retInputs = sub.createOnapDmaapDRObj(retInputs, config, 'p');
+					String name = "feed" + counter;
+					retInputs = sub.createOnapDmaapDRObj(retInputs, config, 'p', "feed" + counter, name);
 					sub.setType(s.getType());
 					streamSubscribes.put(config, sub);
 				} else if(s.getType().equals("message_router") || s.getType().equals("message router")) {
 					String config = s.getConfig_key();
 					DmaapObj sub = new DmaapObj();
-					retInputs = sub.createOnapDmaapMRObj(retInputs, config, 's');
+					String name = "topic" + counter;
+					retInputs = sub.createOnapDmaapMRObj(retInputs, config, 's', "topic" + counter, name);
 					sub.setType(s.getType());
 					streamSubscribes.put(config, sub);
 				}
+				counter++;
 			}
 		}
 
@@ -131,24 +137,20 @@ public class Appconfig {
 				else {
 					parameters.put(pName, p.getValue());
 				}
-				
 			}
+		}
+		if(override != null) {
+			GetInput ov = new GetInput();
+			ov.setGet_input("service_component_name_override");
+			parameters.put("service_component_name_override", ov);
+			LinkedHashMap<String, Object> over = new LinkedHashMap<String, Object>();
+			over.put("type", "string");
+			over.put("default", override);
+			retInputs.put("service_component_name_override", over);
 		}
 		this.setParams(parameters);
 		return retInputs;
 	}
 
-//	public void createTemplateAppconfig() {
-//		//set service calls
-//		CallsObj[] call = new CallsObj[0];
-//		this.setService_calls(call);
-//
-//		//set the stream publishes
-//		TreeMap<String, DmaapObj> streamPublishes = new TreeMap<String, DmaapObj>();
-//		this.setStream_publishes(streamPublishes);
-//		
-//		//set the stream subscribes
-//		TreeMap<String, DmaapObj> streamSubscribes = new TreeMap<String, DmaapObj>();
-//		this.setStream_subcribes(streamSubscribes);
-//	}
+
 }

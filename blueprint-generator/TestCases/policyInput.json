@@ -1,0 +1,28 @@
+{
+	"policies": [
+		{
+			"configAttributes": "",
+	        "configName": "",
+	        "onapName": "DCAE",
+	        "policyName": "DCAE.Config_*",
+	        "unique": false
+		},
+		{
+			"onapName": "DCAE",
+			"policyName": "DCAE.Config_*",
+			"unique": true
+		},
+		{
+			"configAttributes": "",
+			"configName": "",
+			"onapName": "DCAE",
+			"policyName": "DCAE.Config_*",
+			"unique": false
+		}
+	],
+	"policy": [
+		{
+			"policy_id" : "id_0"
+		}
+	]
+}

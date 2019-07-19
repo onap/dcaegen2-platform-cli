@@ -33,21 +33,23 @@ OPTIONS:
 - -i: The path to the JSON spec file (required)
 - -n: Name of the blueprint (optional)
 - -t: the path to the import yaml file (optional)
+- -d: Onvoke the dmaap plugin (optional)
+- -o: The service component name override (optional)
 
 
 If you're on windows it will look like this:
  
 ```bash
-java -cp "lib/blueprint-generator-onap-0.0.1-SNAPSHOT.jar;lib/*" org.onap.blueprintgenerator.core.BlueprintGenerator -p Blueprints -i ComponentSpecs/TestComponentSpec.json -n HelloWorld
+java -cp "lib/blueprint-generator-onap-0.0.1-SNAPSHOT.jar;lib/*" org.onap.blueprintgenerator.core.BlueprintGenerator -p Blueprints -i ComponentSpecs/TestComponentSpec.json -n HelloWorld -d
 ```
 
 If you're on linux it will look like this
 
 ```bash
-java -cp blueprint-generator/lib/blueprint-generator-0.0.1-SNAPSHOT.jar:blueprint-generator/lib/* org.onap.blueprintgenerator.core.BlueprintGenerator -p Blueprints -i ComponentSpecs/TestComponentSpec.json -n HelloWorld
+java -cp blueprint-generator/lib/blueprint-generator-0.0.1-SNAPSHOT.jar:blueprint-generator/lib/* org.onap.blueprintgenerator.core.BlueprintGenerator -p Blueprints -i ComponentSpecs/TestComponentSpec.json -n HelloWorld -d
 ```
 
-This command will create a blueprint from the component spec TestComponentSpec. The blueprint file name will be called HelloWorld.yaml and it will be in the directory Blueprints.
+This command will create a blueprint from the component spec TestComponentSpec. The blueprint file name will be called HelloWorld.yaml and it will be in the directory Blueprints.THe blueprint will also contain the dmaap plugin.
 
 ## Extra information:
 - The component spec must be of the same format as stated in the onap [readthedocs](https://onap.readthedocs.io/en/latest/submodules/dcaegen2.git/docs/sections/components/component-specification/common-specification.html#working-with-component-specs) page 

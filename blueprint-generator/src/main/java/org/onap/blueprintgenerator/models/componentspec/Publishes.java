@@ -56,16 +56,18 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 //Called in Streams Object
 public class Publishes {
-	
+
 	/** The config key. */
 	private String config_key;
-	
+
 	/** The format. */
 	private String format;
-	
+
+	/** The route. */
+	private String route;
 	/** The type. */
 	private String type;
-	
+
 	/** The version. */
 	private String version;
 }

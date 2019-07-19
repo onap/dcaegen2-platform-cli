@@ -42,15 +42,13 @@ import lombok.NoArgsConstructor;
 @JsonInclude(value=Include.NON_NULL)
 
 public class OnapBlueprint extends Blueprint{
-	
-	public Blueprint createOnapBlueprint(ComponentSpec cs, String importPath) {
-		
+	public Blueprint createOnapBlueprint(ComponentSpec cs, String importPath, String override) {
+
 		//create the inputs that will be used
 		TreeMap<String, LinkedHashMap<String, Object>> inputs = new TreeMap<String, LinkedHashMap<String, Object>>();
-		
 		//set the tosca definition which is the same for everything
 		this.setTosca_definitions_version("cloudify_dsl_1_3");
-		
+
 		//set the imports 
 		if(importPath != "") {
 			Imports imps = new Imports();
@@ -61,30 +59,26 @@ public class OnapBlueprint extends Blueprint{
 			this.setImports(imps.createOnapImports());
 		}
 
-		
 		//create the node template
 		TreeMap<String, Node> nodeTemplate = new TreeMap<String, Node>();
 		String nodeName = cs.getSelf().getName();
-		
+
 		//create the onap node that will be used
 		OnapNode node = new OnapNode();
-		inputs = node.createOnapNode(inputs, cs);
+		inputs = node.createOnapNode(inputs, cs, override);
 		nodeTemplate.put(nodeName, node);
 		this.setNode_templates(nodeTemplate);
-		
+
 		//set the inputs
 		this.setInputs(inputs);
-		
+
 		Blueprint bp = new Blueprint();
 		bp.setImports(this.getImports());
 		bp.setInputs(this.getInputs());
 		bp.setNode_templates(this.getNode_templates());
 		bp.setTosca_definitions_version(this.getTosca_definitions_version());
-		
+
 		return bp;
-		
+
 	}
-
-
-	
 }

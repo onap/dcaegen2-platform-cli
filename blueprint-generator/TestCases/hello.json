@@ -1,0 +1,129 @@
+{
+	"self": {
+		"component_type": "docker",
+		"description": "Hello World mS for subscribing the data from local DMaaP, DR or MR, processing them and publishing them as PM files to local DMaaP DR",
+		"name": "dcae.collectors.vcc.helloworld.pm",
+		"version": "1.0.1"
+	},
+	"services": {
+		"calls": [],
+		"provides": []
+	},
+	"streams": {
+		"publishes": [{
+				"config_key": "DCAE-HELLO-WORLD-PUB-DR",
+				"format": "dataformat_Hello_World_PM",
+				"type": "data_router",
+				"version": "1.0.0"
+			},
+			{
+				"config_key": "DCAE-HELLO-WORLD-PUB-MR",
+				"format": "dataformat_Hello_World_PM",
+				"type": "message_router",
+				"version": "1.0.0"
+			}
+		],
+		"subscribes": [{
+				"config_key": "DCAE-HELLO-WORLD-SUB-MR",
+				"format": "dataformat_Hello_World_PM",
+				"route": "/DCAE_HELLO_WORLD_SUB_MR",
+				"type": "message_router",
+				"version": "1.0.0"
+			},
+			{
+				"config_key": "DCAE-HELLO-WORLD-SUB-DR",
+				"format": "dataformat_Hello_World_PM",
+				"route": "/DCAE-HELLO-WORLD-SUB-DR",
+				"type": "data_router",
+				"version": "1.0.0"
+			}		
+		]
+	},
+    "parameters": 
+    [
+        {
+            "name": "vcc_hello_name",
+            "value": "fsdfa",
+            "description": "the name entered for specific person",
+			"sourced_at_deployment": true,
+			"designer_editable": true,
+			"policy_editable": false,
+			"type": "string"         
+        },
+        
+        {
+			"name": "useDtiConfig",
+			"value": false,
+			"description": "component depends on configuration from dti.",
+			"sourced_at_deployment": false,
+			"designer_editable": false,
+			"policy_editable": false,
+			 "required" : true
+		},
+
+		{
+			"name": "isSelfServeComponent",
+			"value": false,
+			"description": "Is this used as self serve component.",
+			"sourced_at_deployment": false,
+			"designer_editable": false,
+			"policy_editable": false,
+			"required" : true,
+			"type": "string"
+		}
+    ],
+	"auxilary": {
+		"healthcheck": {
+			"interval": "60s",
+			"timeout": "20s",
+			"script": "/opt/app/vcc/bin/common/HealthCheck_HelloWorld.sh",
+			"type": "docker"
+		},
+		"volumes": [
+		{
+			"container": {
+			"bind": "/opt/app/dcae-certificate"
+			},
+			"host": {
+				"path": "/opt/app/dcae-certificate"
+			}
+		},
+		{
+			"container": {
+			"bind": "/opt/logs/DCAE/dmd/AGENT"
+			},
+			"host": {
+				"path": "/opt/logs/DCAE/helloworldpm/dmd/AGENT"
+			}
+		},
+		{
+			"container": {
+			"bind": "/opt/logs/DCAE/dmd/WATCHER"
+			},
+			"host": {
+				"path": "/opt/logs/DCAE/helloworldpm/dmd/WATCHER"
+			}
+		},
+		{
+			"container": {
+			"bind": "/opt/app/vcc/logs/DCAE"
+			},
+			"host": {
+				"path": "/opt/logs/DCAE/helloworldpm/vcc-logs"
+			}
+		},
+		{
+			"container": {
+			"bind": "/opt/app/vcc/archive/data"
+			},
+			"host": {
+				"path": "/opt/data/DCAE/helloworldpm/vcc-archive"
+			}
+		}
+        ]        
+    },
+    "artifacts": [{
+		"type": "docker image",
+		"uri": "dockercentral.it.att.com:5100/com.att.dcae.controller/dcae-controller-vcc-helloworld-pm:18.02-001"
+	}]	
+}

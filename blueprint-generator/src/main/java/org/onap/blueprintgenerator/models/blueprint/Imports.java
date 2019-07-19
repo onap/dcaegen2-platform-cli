@@ -42,20 +42,23 @@ import lombok.NoArgsConstructor;
 @Getter @Setter
 @JsonInclude(value=Include.NON_NULL)
 public class Imports {
-	
 	/** The imports. */
 	private ArrayList<String> imports;
 
 	public static ArrayList<String> createOnapImports() {
 		ArrayList<String> imps = new ArrayList<String>();
-		
 		imps.add("http://www.getcloudify.org/spec/cloudify/3.4/types.yaml");
 		imps.add("https://nexus.onap.org/service/local/repositories/raw/content/org.onap.dcaegen2.platform.plugins/R4/k8splugin/1.4.5/k8splugin_types.yaml");
 		imps.add("https://nexus.onap.org/service/local/repositories/raw/content/org.onap.dcaegen2.platform.plugins/R4/dcaepolicyplugin/2.3.0/dcaepolicyplugin_types.yaml");
-		
 		return imps;
 	}
-	
+	public static ArrayList<String> createDmaapImports(){
+		ArrayList<String> imps = new ArrayList<String>();
+		imps.add("http://www.getcloudify.org/spec/cloudify/3.4/types.yaml");
+		imps.add("https://nexus.onap.org/service/local/repositories/raw/content/org.onap.dcaegen2.platform.plugins/R5/k8splugin/1.6.0/k8splugin_types.yaml");
+		imps.add("https://nexus.onap.org/service/local/repositories/raw/content/org.onap.ccsdk.platform.plugins/type_files/dmaap/dmaap.yaml");
+		return imps;
+	}
 	public static ArrayList<String> createImportsFromFile(String path) {
 		Imports imports = new Imports();
 		ObjectMapper importMapper = new ObjectMapper(new YAMLFactory().configure(YAMLGenerator.Feature.MINIMIZE_QUOTES, true));
@@ -65,12 +68,10 @@ public class Imports {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		
 		ArrayList<String> imps = new ArrayList<String>();
 		for(String s: imports.getImports()) {
 			imps.add(s);
 		}
-		
 		return imps;
 	}
 }
