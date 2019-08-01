@@ -98,7 +98,7 @@ public class Auxilary {
 			for(int i = 0; i < p.length(); i++) {
 				if(p.charAt(i) == ':') {
 					internal = '"' + internal + '"';
-					internal = "concat:['" + internal + "', {get_input: external_port}]"; 
+					internal = "concat: ['" + internal + "', {get_input: external_port}]"; 
 					ports.add(internal);
 				}
 				if(p.charAt(i) == ':' && !foundPort) {

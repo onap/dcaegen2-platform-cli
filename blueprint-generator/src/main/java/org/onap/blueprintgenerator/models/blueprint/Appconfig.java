@@ -39,8 +39,8 @@ import lombok.Setter;
 @Setter
 public class Appconfig {
 	private CallsObj[] service_calls;
-	private TreeMap<String, DmaapObj> stream_publishes;
-	private TreeMap<String, DmaapObj> stream_subcribes;
+	private TreeMap<String, DmaapObj> streams_publishes;
+	private TreeMap<String, DmaapObj> streams_subscribes;
 	private TreeMap<String, Object> params;
 
 	@JsonAnyGetter
@@ -106,8 +106,8 @@ public class Appconfig {
 			}
 		}
 
-		this.setStream_publishes(streamPublishes);
-		this.setStream_subcribes(streamSubscribes);
+		this.setStreams_publishes(streamPublishes);
+		this.setStreams_subscribes(streamSubscribes);
 
 		//set the parameters into the appconfig
 		TreeMap<String, Object> parameters = new TreeMap<String, Object>();
