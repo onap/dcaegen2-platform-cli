@@ -118,7 +118,7 @@ class Format(Base):
 
     name = Column(String(), nullable=False)
     version = Column(String(), nullable=False)
-    description = Column(Text(), nullable=False)
+    description = Column(Text(), nullable=True)
     spec = Column(Text(), nullable=False)
 
     when_added = Column(DateTime, default=datetime_now, nullable=True)
