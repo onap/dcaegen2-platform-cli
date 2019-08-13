@@ -85,7 +85,7 @@ def get_docker_client(profile, logins=[]):
 
 def image_exists(image):
     '''Returns True if the image exists locally'''
-    client = docker.from_env(version="auto")
+    client = docker.APIClient(version="auto", **docker.utils.kwargs_from_env())
     return True if client.images(image) else False
 
 

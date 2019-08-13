@@ -53,7 +53,7 @@ setup(
                       'psycopg2-binary==2.7.5',
                       'genson',
                       'onap-dcae-discovery-client>=2.0.0',
-                      'onap-dcae-dockering>=1.0.0,<2.0.0'
+                      'onap-dcae-dockering>=1.4.1,<2.0.0'
                       ],
     tests_require=['pytest',
                    'mock'],
