@@ -124,7 +124,7 @@ public class DmaapNode extends Node{
 		GetInput topicInput = new GetInput();
 		topicInput.setGet_input(name + "_name");
 		props.setFeed_name(topicInput);
-		props.setUseExisting(true);
+		//props.setUseExisting(true);
 		retInputs.put(name + "_name", stringType);
 		this.setProperties(props);
 
@@ -144,7 +144,7 @@ public class DmaapNode extends Node{
 		GetInput topicInput = new GetInput();
 		topicInput.setGet_input(name + "_name");
 		props.setTopic_name(topicInput);
-		props.setUseExisting(true);
+		//props.setUseExisting(true);
 		retInputs.put(name + "_name", stringType);
 		this.setProperties(props);
 

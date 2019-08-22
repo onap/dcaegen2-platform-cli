@@ -388,7 +388,7 @@ public class BlueprintGeneratorTest {
 		OnapNode node = (OnapNode) bp.getNode_templates().get("test.component.spec");
 
 		boolean test = false;
-		if(!node.getProperties().getApplication_config().getStream_publishes().isEmpty()) {
+		if(!node.getProperties().getApplication_config().getStreams_publishes().isEmpty()) {
 			test = true;
 			System.out.println("tst");
 		}

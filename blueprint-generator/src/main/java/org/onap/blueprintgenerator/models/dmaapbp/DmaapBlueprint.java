@@ -49,13 +49,13 @@ public class DmaapBlueprint extends Blueprint{
 		//set the imports
 		Imports imps = new Imports();
 		if(importPath.equals("")) {
-			imps.createDmaapImports();
+			bp.setImports(imps.createDmaapImports());
 		}
 		else {
-			imps.createImportsFromFile(importPath);
+			bp.setImports(imps.createImportsFromFile(importPath));
 		}
 
-		bp.setImports(imps.getImports());
+		//bp.setImports(imps.getImports());
 
 		//set and create the node templates
 		TreeMap<String, Node> nodeTemplate = new TreeMap();

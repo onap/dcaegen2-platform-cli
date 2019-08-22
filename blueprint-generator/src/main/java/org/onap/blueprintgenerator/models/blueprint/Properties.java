@@ -56,7 +56,7 @@ public class Properties {
 	ArrayList<DmaapStreams> streams_subscribes;
 	private TreeMap<String, Object> tls_info;
 	private ResourceConfig resource_config;
-	private boolean useExisting;
+	//private boolean useExisting;
 
 	public TreeMap<String, LinkedHashMap<String, Object>> createOnapProperties(TreeMap<String, LinkedHashMap<String, Object>> inps, ComponentSpec cs, String override) {
 		TreeMap<String, LinkedHashMap<String, Object>> retInputs = new TreeMap<String, LinkedHashMap<String, Object>>();
