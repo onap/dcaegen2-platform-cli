@@ -54,7 +54,22 @@
 			"designer_editable": true,
 			"policy_editable": true,
 			"policy_group": "Test_Parameters",
-			"required": true
+			"required": true,
+			"policy_schema": [
+				{
+					"name": "PolicySchemaTest",
+					"description": "List of objects for vnf type monitorng",
+					"type": "String",
+					"entry_schema": [
+						{
+							"name": "TestEntrySchema",
+							"description": "entry",
+							"type": "string",
+							"value": "None"
+						}
+					]
+				}
+			]
 		}
 	],
 

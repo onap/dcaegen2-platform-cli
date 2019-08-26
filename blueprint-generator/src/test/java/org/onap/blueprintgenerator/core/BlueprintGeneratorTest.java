@@ -56,7 +56,7 @@ import org.onap.blueprintgenerator.models.componentspec.Subscribes;
 import org.onap.blueprintgenerator.models.componentspec.Volumes;
 import org.onap.blueprintgenerator.models.dmaapbp.DmaapNode;
 import org.onap.blueprintgenerator.models.onapbp.OnapNode;
-
+import org.onap.blueprintgenerator.models.policymodel.PolicyModel;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -420,5 +420,16 @@ public class BlueprintGeneratorTest {
 		bp.printInstructions();
 		boolean t = true;
 		assertEquals(true, t);
+	}
+	
+	@Test
+	public void testPolicyModels() {
+		ComponentSpec cs = new ComponentSpec();
+		cs.createComponentSpecFromFile("TestCases/testComponentSpec.json");
+		
+		PolicyModel p = new PolicyModel();
+		p.createPolicyModels(cs, "TestModels");
+		
+		assertEquals(true, true);
 	}
 }

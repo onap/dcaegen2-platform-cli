@@ -58,3 +58,25 @@ This command will create a blueprint from the component spec TestComponentSpec. 
 - If you do not add a -n tag the blueprint name will default to what it is in the component spec
 - If the directory you specified in the -p tag does not already exist the directory will be created for you
 - The -t flag will override the default imports set for the blueprints. To see an example of how the import yaml file should be structured see the testImports.yaml file under the folder TestCases.
+
+
+#Instructions for policy models
+
+-Run the program on the command line with the following tags:
+OPTIONS:
+- -i: The path to the JSON spec file (required)
+- -p: The output path for all of the models (required)
+
+If you're on windows it will look like this:
+ 
+```bash
+java -cp "lib/blueprint-generator-onap-0.0.1-SNAPSHOT.jar;lib/*" org.onap.blueprintgenerator.core.PolicyCreate -p models -i ComponentSpecs/TestComponentSpec.json
+```
+
+If you're on linux it will look like this
+
+```bash
+java -cp blueprint-generator/lib/blueprint-generator-0.0.1-SNAPSHOT.jar:blueprint-generator/lib/* org.onap.blueprintgenerator.core.PolicyCreate -i ComponentSpecs/TestComponentSpec.json
+```
+
+This command will create a directory called models and put the policy models created from the component spec given in that directory. (A component spec may generate multiple policy models)
