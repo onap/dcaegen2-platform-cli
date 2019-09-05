@@ -80,6 +80,8 @@ def format_description(description, line_width=50, num_lines=3):
     of lines. The last line trails with ".." if the text still overflows to
     signal that there is more.
     """
+    if not description:
+        return ''
     lines = textwrap.wrap(description)
     lines = lines[:num_lines]
     last_line = lines.pop()
