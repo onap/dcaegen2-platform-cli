@@ -21,23 +21,21 @@
 package org.onap.blueprintgenerator.core;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.TreeMap;
 
 import org.junit.Test;
-import org.onap.blueprintgenerator.core.BlueprintGenerator;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 import org.onap.blueprintgenerator.models.blueprint.Blueprint;
-import org.onap.blueprintgenerator.models.blueprint.ConcatObj;
-import org.onap.blueprintgenerator.models.blueprint.DmaapObj;
 import org.onap.blueprintgenerator.models.blueprint.GetInput;
-import org.onap.blueprintgenerator.models.blueprint.Interfaces;
-import org.onap.blueprintgenerator.models.blueprint.Start;
-import org.onap.blueprintgenerator.models.blueprint.StartInputs;
 import org.onap.blueprintgenerator.models.componentspec.Artifacts;
 import org.onap.blueprintgenerator.models.componentspec.Auxilary;
 import org.onap.blueprintgenerator.models.componentspec.CallsObj;
@@ -60,8 +58,7 @@ import org.onap.blueprintgenerator.models.policymodel.PolicyModel;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-
-import junit.framework.Assert;
+import picocli.CommandLine;
 
 
 // TODO: Auto-generated Javadoc
@@ -413,13 +410,26 @@ public class BlueprintGeneratorTest {
 		}
 		assertEquals(true, d);
 	}
+
 	@Test
-	public void testPrintInstructions() {
-		//check if the instructions are pritns correctly and if the print statement comes out then its correct
-		BlueprintGenerator bp = new BlueprintGenerator();
-		bp.printInstructions();
-		boolean t = true;
-		assertEquals(true, t);
+	public void testPrintInstructionsBlueprintCommand() {
+		BlueprintCommand objUnderTest = new BlueprintCommand();
+		CommandLine cli = new CommandLine(objUnderTest);
+		PrintStream mockStdOutWriter = Mockito.mock(PrintStream.class);
+		ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+		cli.usage(mockStdOutWriter);
+		verify(mockStdOutWriter, times(1)).print(any(Object.class));
+
+	}
+
+	@Test
+	public void testPrintInstructionsPolicyCommand() {
+		PolicyCommand objUnderTest = new PolicyCommand();
+		CommandLine cli = new CommandLine(objUnderTest);
+		PrintStream mockStdOutWriter = Mockito.mock(PrintStream.class);
+		ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+		cli.usage(mockStdOutWriter);
+		verify(mockStdOutWriter, times(1)).print(any(Object.class));
 	}
 	
 	@Test

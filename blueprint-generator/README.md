@@ -3,22 +3,13 @@
 This tool allows the user to create a blueprint from a component spec json file 
 
 # Instructions for building the tool locally
-- cd into the root directory of the project (where the pom is located)
-- Run the command: mvn clean install
+- Change directory into the root directory of the project (where the pom is located)
+- Run the command: `mvn clean install`
 - This will create a jar file and a tar file
-- Unzip the tar file within this target directory
-- cd into the folder that was created
-- Instructions on how to run the tool from this folder are below
-- If you're on windows type this out before you add your flags 
+- To execute the application
 
 ```bash
-java -cp "lib/blueprint-generator-1.0.0-SNAPSHOT.jar;lib/*" org.onap.blueprintgenerator.core.BlueprintGenerator
-```
-
--If you're on linux type this out before you add your flags
-
-```bash
-java -cp blueprint-generator/lib/blueprint-generator-1.0.0-SNAPSHOT.jar:blueprint-generator/lib/* org.onap.blueprintgenerator.core.BlueprintGenerator
+java -jar target/blueprint-generator-1.2.1-SNAPSHOT-executable.jar
 ```
 
 
@@ -37,19 +28,13 @@ OPTIONS:
 - -o: The service component name override (optional)
 
 
-If you're on windows it will look like this:
- 
-```bash
-java -cp "lib/blueprint-generator-onap-0.0.1-SNAPSHOT.jar;lib/*" org.onap.blueprintgenerator.core.BlueprintGenerator -p Blueprints -i ComponentSpecs/TestComponentSpec.json -n HelloWorld -d
-```
-
-If you're on linux it will look like this
+it will look like this:
 
 ```bash
-java -cp blueprint-generator/lib/blueprint-generator-0.0.1-SNAPSHOT.jar:blueprint-generator/lib/* org.onap.blueprintgenerator.core.BlueprintGenerator -p Blueprints -i ComponentSpecs/TestComponentSpec.json -n HelloWorld -d
+java -jar target/blueprint-generator-1.2.1-SNAPSHOT-executable.jar blueprint -p Blueprints -i ComponentSpecs/TestComponentSpec.json -n HelloWorld -d
 ```
 
-This command will create a blueprint from the component spec TestComponentSpec. The blueprint file name will be called HelloWorld.yaml and it will be in the directory Blueprints.THe blueprint will also contain the dmaap plugin.
+This command will create a blueprint from the component spec TestComponentSpec. The blueprint file name will be called HelloWorld.yaml and it will be in the directory Blueprints. The blueprint will also contain the DMaaP plugin.
 
 ## Extra information:
 - The component spec must be of the same format as stated in the onap [readthedocs](https://onap.readthedocs.io/en/latest/submodules/dcaegen2.git/docs/sections/components/component-specification/common-specification.html#working-with-component-specs) page 
@@ -67,16 +52,10 @@ OPTIONS:
 - -i: The path to the JSON spec file (required)
 - -p: The output path for all of the models (required)
 
-If you're on windows it will look like this:
- 
-```bash
-java -cp "lib/blueprint-generator-onap-0.0.1-SNAPSHOT.jar;lib/*" org.onap.blueprintgenerator.core.PolicyCreate -p models -i ComponentSpecs/TestComponentSpec.json
-```
-
-If you're on linux it will look like this
+it will look like this:
 
 ```bash
-java -cp blueprint-generator/lib/blueprint-generator-0.0.1-SNAPSHOT.jar:blueprint-generator/lib/* org.onap.blueprintgenerator.core.PolicyCreate -i ComponentSpecs/TestComponentSpec.json
+java -jar target/blueprint-generator-1.2.1-SNAPSHOT-executable.jar policy -p models -i ComponentSpecs/TestComponentSpec.json
 ```
 
 This command will create a directory called models and put the policy models created from the component spec given in that directory. (A component spec may generate multiple policy models)
