@@ -1,0 +1,4 @@
+distribution_type: 'maven'
+version: '1.2.1'
+project: 'dcaegen2/platform/cli'
+log_dir: 'dcaegen2-platform-cli-maven-stage-master/142/'
